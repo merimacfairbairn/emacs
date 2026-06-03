@@ -559,6 +559,14 @@
 (add-to-list 'completion-at-point-functions #'cape-dabbrev)
 (add-to-list 'completion-at-point-functions #'cape-file))
 
+(use-package kind-icon
+  :after corfu
+  :custom
+  (kind-icon-default-face 'corfu-default)
+  :config
+  (add-to-list 'corfu-margin-formatters
+               #'kind-icon-margin-formatter))
+
 (use-package projectile
   :diminish projectile-mode
   :config (projectile-mode)
@@ -674,3 +682,26 @@
 
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 2 1000 1000))
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(package-selected-packages
+   '(all-the-icons-dired auto-package-update cape command-log-mode
+			 company-box corfu counsel-projectile dap-mode
+			 dired-hide-dotfiles dired-open doom-modeline
+			 doom-themes embark-consult eshell-git-prompt
+			 eterm-256color evil-collection
+			 evil-nerd-commenter evil-org forge general
+			 helpful ivy-prescient ivy-rich kind-icon
+			 lsp-ivy lsp-ui marginalia no-littering
+			 orderless org-bullets python-mode pyvenv
+			 rainbow-delimiters typescript-mode vertico
+			 visual-fill-column vterm)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ )

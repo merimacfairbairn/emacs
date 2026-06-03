@@ -869,6 +869,18 @@ Modern completions stack
   (add-to-list 'completion-at-point-functions #'cape-file))
 #+end_src
 
+*** Corfu Icons
+
+#+begin_src emacs-lisp
+  (use-package kind-icon
+    :after corfu
+    :custom
+    (kind-icon-default-face 'corfu-default)
+    :config
+    (add-to-list 'corfu-margin-formatters
+                 #'kind-icon-margin-formatter))
+#+end_src
+
 ** Projectile
 
 [[https://projectile.mx/][Projectile]] is a project management library for Emacs which makes it a lot easier to navigate around code projects for various languages.  Many packages integrate with Projectile so it's a good idea to have it installed even if you don't use its commands directly.
