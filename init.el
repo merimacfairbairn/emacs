@@ -110,9 +110,8 @@
     ;; M-x
     "SPC" '(execute-extended-command :which-key "M-x")
     "/" '(consult-ripgrep :which-key "Search Project")
-    ;; Make SPC x behave like C-x
+    "!" '(shell-command :which-key "shell")
     "x" '(ctl-x-map :which-key "execute")
-    ;; Make SPC c behave like C-c
     "c" '(mode-specific-map :which-key "mode map")
   
   ;; HELP
@@ -137,9 +136,11 @@
     "ts" '(hydra-text-scale/body :which-key "scale text")
 
   ;; BUFFERS
-    "b" '(:ignore t :which-key "buffers")
-    "bs" '(consult-buffer  :which-key "switch")
-    "bk" '(kill-current-buffer :which-key "kill")
+    "b" '(:ignore t :which-key "bufs")
+    "bb" '(consult-buffer  :which-key "switch")
+    "bk" '(kill-this-buffer :which-key "kill")
+    "be" '(erase-buffer :which-key "erase")
+    "bs" '(scratch-buffer :which-key "scratch")
 
   ;; ORG
     "o" '(:ignore t :which-key "Org")
