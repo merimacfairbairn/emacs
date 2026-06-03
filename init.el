@@ -532,19 +532,32 @@
   :config
   (pyvenv-mode 1))
 
-(use-package company
-  :after lsp-mode
-  :hook (lsp-mode . company-mode)
-  :bind (:map company-active-map
-         ("<tab>" . company-complete-selection))
-        (:map lsp-mode-map
-         ("<tab>" . company-indent-or-complete-common))
+(use-package corfu
   :custom
-  (company-minimum-prefix-length 1)
-  (company-idle-delay 0.0))
+  (corfu-auto t)
+  (corfu-auto-prefix 3)
+  (corfu-auto-delay 0.2)
+  (corfu-cycle t)
+  (corfu-preview-current t)
+  (corfu-preselect 'prompt)
 
-(use-package company-box
-  :hook (company-mode . company-box-mode))
+  :bind
+  (:map corfu-map
+        ("C-n" . corfu-next)
+        ("C-p" . corfu-previous)
+        ("RET" . corfu-insert))
+
+  :init
+  (global-corfu-mode))
+
+(use-package emacs
+  :custom
+  (tab-always-indent 'complete))
+
+(use-package cape
+:init
+(add-to-list 'completion-at-point-functions #'cape-dabbrev)
+(add-to-list 'completion-at-point-functions #'cape-file))
 
 (use-package projectile
   :diminish projectile-mode
