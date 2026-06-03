@@ -106,56 +106,46 @@
     :prefix "SPC"
     :global-prefix "C-SPC")
 
-  ;; M-x
   (efs/leader-keys
-    "SPC" '(execute-extended-command :which-key "M-x"))
-
-  ;; Make SPC x behave like C-x
-  (efs/leader-keys
-    "x" '(ctl-x-map :which-key "execute"))
-
-  ;; Make SPC c behave like C-c
-  (efs/leader-keys
-    "c" '(mode-specific-map :which-key "mode map"))
+    ;; M-x
+    "SPC" '(execute-extended-command :which-key "M-x")
+    "/" '(consult-ripgrep :which-key "Search Project")
+    ;; Make SPC x behave like C-x
+    "x" '(ctl-x-map :which-key "execute")
+    ;; Make SPC c behave like C-c
+    "c" '(mode-specific-map :which-key "mode map")
   
   ;; HELP
-  (efs/leader-keys
     "h" '(:ignore t :which-key "help")
     "hf" '(describe-function :which-key "describe function")
     "hm" '(describe-mode :which-key "describe mode")
     "hb" '(describe-bindings :which-key "describe bindings")
     "hv" '(describe-variable :which-key "describe variable")
-    "hrr" '((lambda () (interactive) (load-file user-init-file)) :which-key "reload config"))
+    "hrr" '((lambda () (interactive) (load-file user-init-file)) :which-key "reload config")
 
   ;; PROJECTILE
-  (efs/leader-keys
-    "p" '(projectile-command-map :which-key "projectile"))
+    "p" '(projectile-command-map :which-key "projectile")
 
   ;; GIT
-  (efs/leader-keys
     "g" '(:ignore t :which-key "git")
     "gs" '(magit-status :which-key "status")
-    "gi" '(magit-init :which-key "init"))
+    "gi" '(magit-init :which-key "init")
 
   ;; TOGGLES
-  (efs/leader-keys
     "t"  '(:ignore t :which-key "toggles")
     "tt" '(counsel-load-theme :which-key "choose theme")
-    "ts" '(hydra-text-scale/body :which-key "scale text"))
+    "ts" '(hydra-text-scale/body :which-key "scale text")
 
   ;; BUFFERS
-  (efs/leader-keys
     "b" '(:ignore t :which-key "buffers")
-    "bs" '(switch-to-buffer :which-key "switch")
-    "bk" '(kill-current-buffer :which-key "kill"))
+    "bs" '(consult-buffer  :which-key "switch")
+    "bk" '(kill-current-buffer :which-key "kill")
 
   ;; ORG
-  (efs/leader-keys
     "o" '(:ignore t :which-key "Org")
-    "oa" '(org-agenda :which-key "Agenda"))
+    "oa" '(org-agenda :which-key "Agenda")
 
   ;; FILES
-  (efs/leader-keys
     "." '(find-file :which-key "find file")
     "f" '(:ignore t :which-key "files")
     "fde" '(lambda () (interactive) (find-file (expand-file-name "~/.config/emacs/init.org")))))
@@ -205,46 +195,55 @@
   (which-key-mode)
   (setq which-key-idle-delay 1))
 
-(use-package ivy
-  :diminish
-  :bind (("C-s" . swiper)
-         :map ivy-minibuffer-map
-         ("TAB" . ivy-alt-done)
-         ("C-l" . ivy-alt-done)
-         ("C-j" . ivy-next-line)
-         ("C-k" . ivy-previous-line)
-         :map ivy-switch-buffer-map
-         ("C-k" . ivy-previous-line)
-         ("C-l" . ivy-done)
-         ("C-d" . ivy-switch-buffer-kill)
-         :map ivy-reverse-i-search-map
-         ("C-k" . ivy-previous-line)
-         ("C-d" . ivy-reverse-i-search-kill))
-  :config
-  (ivy-mode 1))
-
-(use-package ivy-rich
-  :after ivy
+;; Completion UI
+(use-package vertico
+  :ensure t
+  :bind (:map vertico-map
+	      ("C-j" . vertico-next)
+	      ("C-k" . vertico-previous)
+	      ("C-f" . vertico-exit)
+	 :map minibuffer-local-map
+	      ("M-h" . backward-kill-word))
+  :custom
+  (vertico-cycle t)
   :init
-  (ivy-rich-mode 1))
+  (vertico-mode))
 
-(use-package counsel
-  :bind (("C-M-j" . 'counsel-switch-buffer)
+(use-package savehist
+  :init
+  (savehist-mode))
+
+;; Rich annotations
+(use-package marginalia
+  :after vertico
+  :ensure t
+  :init
+  (marginalia-mode))
+
+;; Better matching
+(use-package orderless
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
+  (completion-category-overrides
+   '((file (styles partial-completion)))))
+
+;; Counsel replacement
+(use-package consult
+  :bind (("C-s" . consult-line)
+         ("C-M-j" . consult-buffer)
          :map minibuffer-local-map
-         ("C-r" . 'counsel-minibuffer-history))
-  :custom
-  (counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only)
-  :config
-  (counsel-mode 1))
+         ("C-r" . consult-history)))
 
-(use-package ivy-prescient
-  :after counsel
-  :custom
-  (ivy-prescient-enable-filtering nil)
-  :config
-  ;; Uncomment the following line to have sorting remembered across sessions!
-  ;(prescient-persist-mode 1)
-  (ivy-prescient-mode 1))
+;; Optional but highly recommended
+(use-package embark
+  :bind
+  (("C-." . embark-act)
+   ("C-;" . embark-dwim)
+   ("C-h B" . embark-bindings)))
+
+(use-package embark-consult
+  :after (embark consult))
 
 (use-package helpful
   :commands (helpful-callable helpful-variable helpful-command helpful-key)
