@@ -106,18 +106,26 @@
     :prefix "SPC"
     :global-prefix "C-SPC")
 
+  ;; M-x
+  (efs/leader-keys
+    "SPC" '(execute-extended-command :which-key "M-x"))
+
   ;; Make SPC x behave like C-x
   (efs/leader-keys
     "x" '(ctl-x-map :which-key "execute"))
 
   ;; Make SPC c behave like C-c
   (efs/leader-keys
-    "c" mode-specific-map)
+    "c" '(mode-specific-map :which-key "mode map"))
   
   ;; HELP
   (efs/leader-keys
     "h" '(:ignore t :which-key "help")
-    "hv" '(helpful-variable :which-key "describe variable"))
+    "hf" '(describe-function :which-key "describe function")
+    "hm" '(describe-mode :which-key "describe mode")
+    "hb" '(describe-bindings :which-key "describe bindings")
+    "hv" '(describe-variable :which-key "describe variable")
+    "hrr" '((lambda () (interactive) (load-file user-init-file)) :which-key "reload config"))
 
   ;; PROJECTILE
   (efs/leader-keys
@@ -141,6 +149,11 @@
     "bs" '(switch-to-buffer :which-key "switch")
     "bk" '(kill-current-buffer :which-key "kill"))
 
+  ;; ORG
+  (efs/leader-keys
+    "o" '(:ignore t :which-key "Org")
+    "oa" '(org-agenda :which-key "Agenda"))
+
   ;; FILES
   (efs/leader-keys
     "." '(find-file :which-key "find file")
@@ -153,7 +166,7 @@
   (setq evil-want-integration t)
   (setq evil-want-keybinding nil)
   (setq evil-want-C-u-scroll t)
-  (setq evil-want-C-i-jump nil)
+  (setq evil-want-C-i-jump t)
   :config
   (evil-mode 1)
   (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
@@ -300,7 +313,7 @@
   (setq org-log-into-drawer t)
 
   (setq org-agenda-files
-        '("~/Org/tasks.org"
+        '("~/Org/inbox.org"
           "~/Org/habits.org"
           "~/Org/calendar.org"
           "~/Org/sessions.org"))
@@ -421,6 +434,14 @@
 
 (use-package visual-fill-column
   :hook (org-mode . efs/org-mode-visual-fill))
+
+(use-package evil-org
+  :ensure t
+  :after org
+  :hook (org-mode . (lambda () evil-org-mode))
+  :config
+  (require 'evil-org-agenda)
+  (evil-org-agenda-set-keys))
 
 (with-eval-after-load 'org
   (org-babel-do-load-languages
