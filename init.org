@@ -8,6 +8,8 @@
 - [ ] Mode dependent bindings
 - [ ] Ord-modern
 - [ ] Javelline (or any Harpoon equivalent)
+- [ ] Gc from nvim
+- [ ] Better copy and paste in insert
 
 * Fonts and BG
 
