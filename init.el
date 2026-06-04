@@ -469,7 +469,11 @@
 
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'efs/org-babel-tangle-config)))
 
-
+(use-package org-modern
+:ensure t
+:hook
+(org-mode . org-modern-mode)
+(org-agenda-finalize . org-modern-agenda))
 
 (defun efs/lsp-mode-setup ()
   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))

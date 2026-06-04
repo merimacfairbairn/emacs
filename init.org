@@ -6,7 +6,7 @@
 - [ ] Add in-line suggestions
 - [ ] Org-specific bindings
 - [ ] Mode dependent bindings
-- [ ] Ord-modern
+- [X] Ord-modern
 - [ ] Javelline (or any Harpoon equivalent)
 - [ ] Gc from nvim
 - [ ] Better copy and paste in insert
@@ -251,7 +251,6 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
     (evil-collection-init))
 
 #+end_src
-
 
 * UI Configuration
 
@@ -670,6 +669,18 @@ This snippet adds a hook to =org-mode= buffers so that =efs/org-babel-tangle-con
 
 #+end_src
 
+** Org-Modern
+Better looking org files
+
+#+begin_src emacs-lisp
+
+  (use-package org-modern
+  :ensure t
+  :hook
+  (org-mode . org-modern-mode)
+  (org-agenda-finalize . org-modern-agenda))
+
+#+end_src
 * Development
 
 ** Languages
