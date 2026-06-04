@@ -2,8 +2,8 @@
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el :mkdirp yes
 
 * TODO Improvements
-- [ ] Add redo ability
-- [ ] Add in-line suggestions
+- [X] Add redo ability
+- [X] Add in-line suggestions
 - [X] Org-specific bindings
 - [ ] Mode dependent bindings
 - [X] Ord-modern
@@ -303,6 +303,7 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
     (setq evil-want-keybinding nil)
     (setq evil-want-C-u-scroll t)
     (setq evil-want-C-i-jump t)
+    (setq evil-undo-system 'undo-redo)
     :config
     (evil-mode 1)
     (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
