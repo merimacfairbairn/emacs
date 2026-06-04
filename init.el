@@ -87,13 +87,13 @@
                 eshell-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
-(set-face-attribute 'default nil :font "FiraCode Nerd Font" :height efs/default-font-size)
+(set-face-attribute 'default nil :font "Iosevka" :height efs/default-font-size)
 
 ;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font "FiraCode Nerd Font" :height efs/default-font-size)
+(set-face-attribute 'fixed-pitch nil :font "Iosevka" :height efs/default-font-size)
 
 ;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil :font "Open Sans" :height efs/default-variable-font-size :weight 'regular)
+(set-face-attribute 'variable-pitch nil :font "Iosevka Aile" :height efs/default-variable-font-size :weight 'regular)
 
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
@@ -469,6 +469,8 @@
 
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'efs/org-babel-tangle-config)))
 
+
+
 (defun efs/lsp-mode-setup ()
   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
   (lsp-headerline-breadcrumb-mode))
@@ -682,26 +684,3 @@
 
 ;; Make gc pauses faster by decreasing the threshold.
 (setq gc-cons-threshold (* 2 1000 1000))
-(custom-set-variables
- ;; custom-set-variables was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- '(package-selected-packages
-   '(all-the-icons-dired auto-package-update cape command-log-mode
-			 company-box corfu counsel-projectile dap-mode
-			 dired-hide-dotfiles dired-open doom-modeline
-			 doom-themes embark-consult eshell-git-prompt
-			 eterm-256color evil-collection
-			 evil-nerd-commenter evil-org forge general
-			 helpful ivy-prescient ivy-rich kind-icon
-			 lsp-ivy lsp-ui marginalia no-littering
-			 orderless org-bullets python-mode pyvenv
-			 rainbow-delimiters typescript-mode vertico
-			 visual-fill-column vterm)))
-(custom-set-faces
- ;; custom-set-faces was added by Custom.
- ;; If you edit it by hand, you could mess it up, so be careful.
- ;; Your init file should contain only one such instance.
- ;; If there is more than one, they won't work right.
- )
