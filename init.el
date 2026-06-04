@@ -250,6 +250,11 @@
   :config
   (evil-collection-init))
 
+(use-package evil-commentary
+  :after evil
+  :config
+  (evil-commentary-mode))
+
 (use-package command-log-mode
   :commands command-log-mode)
 

@@ -8,7 +8,7 @@
 - [ ] Mode dependent bindings
 - [X] Ord-modern
 - [ ] Javelline (or any Harpoon equivalent)
-- [ ] Gc from nvim
+- [X] Gc from nvim
 - [ ] Better copy and paste in insert
 
 * Fonts and BG
@@ -323,6 +323,16 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
     :config
     (evil-collection-init))
 
+#+end_src
+
+** Evil GC commenting
+Emulate gc binding nvim behavior
+
+#+begin_src emacs-lisp
+  (use-package evil-commentary
+    :after evil
+    :config
+    (evil-commentary-mode))
 #+end_src
 
 * UI Configuration
