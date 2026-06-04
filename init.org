@@ -4,7 +4,7 @@
 * TODO Improvements
 - [ ] Add redo ability
 - [ ] Add in-line suggestions
-- [ ] Org-specific bindings
+- [X] Org-specific bindings
 - [ ] Mode dependent bindings
 - [X] Ord-modern
 - [ ] Javelline (or any Harpoon equivalent)
@@ -175,9 +175,81 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
     :after evil
     :config
     (general-create-definer efs/leader-keys
-      :keymaps '(normal insert visual emacs)
+      :states '(normal insert visual emacs)
       :prefix "SPC"
       :global-prefix "C-SPC")
+    (general-create-definer efs/local-leader-keys
+      :states '(normal visual motion)
+      :prefix ","
+      :global-prefix "C-,")
+    
+    (efs/local-leader-keys
+      :keymaps 'org-mode-map
+
+      ;; TODOs
+      "t"  '(org-todo :wk "todo")
+
+      ;; Dates
+      "d"  '(org-deadline :wk "deadline")
+      "s"  '(org-schedule :wk "schedule")
+      "T"  '(org-time-stamp :wk "timestamp")
+
+      ;; Headings
+      "h"  '(:ignore t :wk "heading")
+      "hh" '(org-insert-heading :wk "insert")
+      "ht" '(org-insert-todo-heading :wk "todo heading")
+      "hu" '(org-up-element :wk "up")
+      "hn" '(org-next-visible-heading :wk "next")
+      "hp" '(org-previous-visible-heading :wk "prev")
+
+      ;; Subtree
+      "x"  '(:ignore t :wk "subtree")
+      "xa" '(org-archive-subtree :wk "archive")
+      "xr" '(org-refile :wk "refile")
+      "xk" '(org-cut-subtree :wk "cut")
+      "xy" '(org-copy-subtree :wk "copy")
+
+      ;; Priority
+      "p"  '(:ignore t :wk "priority")
+      "pp" '(org-priority :wk "set")
+
+      ;; Links
+      "l"  '(:ignore t :wk "links")
+      "li" '(org-insert-link :wk "insert")
+      "ls" '(org-store-link :wk "store")
+      "lo" '(org-open-at-point :wk "open")
+
+      ;; Tables
+      "b"  '(:ignore t :wk "table")
+      "ba" '(org-table-align :wk "align")
+      "br" '(org-table-recalculate :wk "recalc")
+
+      ;; Clocking
+      "c"  '(:ignore t :wk "clock")
+      "ci" '(org-clock-in :wk "in")
+      "co" '(org-clock-out :wk "out")
+      "cr" '(org-clock-report :wk "report")
+
+      ;; Navigation
+      "g"  '(:ignore t :wk "goto")
+      "gc" '(org-goto :wk "goto")
+      "gi" '(org-id-get-create :wk "create id")
+
+      ;; Visibility
+      "v"  '(:ignore t :wk "visibility")
+      "vc" '(org-cycle :wk "cycle")
+      "va" '(org-cycle-global :wk "global cycle")
+
+      ;; Export
+      "e"  '(:ignore t :wk "export")
+      "eh" '(org-html-export-to-html :wk "html")
+      "ep" '(org-latex-export-to-pdf :wk "pdf")
+
+      ;; Babel
+      "r"  '(:ignore t :wk "run")
+      "rb" '(org-babel-execute-src-block :wk "block")
+      "ra" '(org-babel-execute-buffer :wk "buffer")
+      )
 
     (efs/leader-keys
       ;; M-x
@@ -186,8 +258,8 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
       "!" '(shell-command :which-key "shell")
       "x" '(ctl-x-map :which-key "execute")
       "c" '(mode-specific-map :which-key "mode map")
-    
-    ;; HELP
+      
+      ;; HELP
       "h" '(:ignore t :which-key "help")
       "hf" '(describe-function :which-key "describe function")
       "hm" '(describe-mode :which-key "describe mode")
@@ -195,31 +267,31 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
       "hv" '(describe-variable :which-key "describe variable")
       "hrr" '((lambda () (interactive) (load-file user-init-file)) :which-key "reload config")
 
-    ;; PROJECTILE
+      ;; PROJECTILE
       "p" '(projectile-command-map :which-key "projectile")
 
-    ;; GIT
+      ;; GIT
       "g" '(:ignore t :which-key "git")
       "gs" '(magit-status :which-key "status")
       "gi" '(magit-init :which-key "init")
 
-    ;; TOGGLES
+      ;; TOGGLES
       "t"  '(:ignore t :which-key "toggles")
       "tt" '(counsel-load-theme :which-key "choose theme")
       "ts" '(hydra-text-scale/body :which-key "scale text")
 
-    ;; BUFFERS
+      ;; BUFFERS
       "b" '(:ignore t :which-key "bufs")
       "bb" '(consult-buffer  :which-key "switch")
       "bk" '(kill-this-buffer :which-key "kill")
       "be" '(erase-buffer :which-key "erase")
       "bs" '(scratch-buffer :which-key "scratch")
 
-    ;; ORG
+      ;; ORG
       "o" '(:ignore t :which-key "Org")
       "oa" '(org-agenda :which-key "Agenda")
 
-    ;; FILES
+      ;; FILES
       "." '(find-file :which-key "find file")
       "f" '(:ignore t :which-key "files")
       "fde" '(lambda () (interactive) (find-file (expand-file-name "~/.config/emacs/init.org")))))
