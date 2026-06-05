@@ -10,6 +10,10 @@
 - [X] Javelline (or any Harpoon equivalent)
 - [X] Gc from nvim
 - [ ] Better copy and paste in insert
+- [ ] Add better org-mode captures
+- [ ] Org-roam
+- [ ] Easy link paste from clipboard
+- [ ] Easy image paste from clipboard
 
 * Fonts and BG
 
