@@ -418,7 +418,7 @@
   :commands (org-capture org-agenda)
   :hook (org-mode . efs/org-mode-setup)
   :config
-  (setq org-ellipsis " ▾")
+  (setq org-ellipsis " ")
 
   (setq org-agenda-start-with-log-mode t)
   (setq org-log-done 'time)
