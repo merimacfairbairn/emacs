@@ -7,7 +7,7 @@
 - [X] Org-specific bindings
 - [ ] Mode dependent bindings
 - [X] Ord-modern
-- [ ] Javelline (or any Harpoon equivalent)
+- [X] Javelline (or any Harpoon equivalent)
 - [X] Gc from nvim
 - [ ] Better copy and paste in insert
 
@@ -1073,6 +1073,18 @@ Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=)
 
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
+
+#+end_src
+
+** Javelin
+=Javelin.el= is a package providing similar functionality to =Harpoon= in neovim. Used for quickly jumping between recorded locations.
+
+#+begin_src emacs-lisp
+
+  (use-package javelin
+    :ensure t
+    :config
+    (global-javelin-minor-mode 1))
 
 #+end_src
 

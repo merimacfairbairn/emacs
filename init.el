@@ -718,6 +718,11 @@
 (use-package rainbow-delimiters
   :hook (prog-mode . rainbow-delimiters-mode))
 
+(use-package javelin
+  :ensure t
+  :config
+  (global-javelin-minor-mode 1))
+
 (use-package term
   :commands term
   :config
