@@ -597,6 +597,15 @@
 (org-mode . org-modern-mode)
 (org-agenda-finalize . org-modern-agenda))
 
+(use-package org-appear
+:commands (org-appear-mode)
+:hook (org-mode . org-appear-mode)
+:config
+(setq org-hide-emphasis-markers t)
+(setq org-appear-autoemphasis t
+      org-appear-autolinks    t
+      org-appear-autosubmarkers t))
+
 (defun efs/lsp-mode-setup ()
   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
   (lsp-headerline-breadcrumb-mode))

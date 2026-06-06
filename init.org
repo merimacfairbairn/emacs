@@ -1,7 +1,7 @@
 #+title: Emacs From Scratch Configuration
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el :mkdirp yes
 
-* TODO Improvements [7/14] 
+* TODO Improvements [8/14] 
 - [X] Add redo ability
 - [X] Add in-line suggestions
 - [X] Org-specific bindings
@@ -15,7 +15,7 @@
 - [ ] Org-roam
 - [ ] Easy link paste from clipboard
 - [ ] Easy image paste from clipboard
-- [ ] Org-appear for better styling
+- [X] Org-appear for better styling
  -----
  
 * Fonts and BG
@@ -815,6 +815,22 @@ Better looking org files
   (org-agenda-finalize . org-modern-agenda))
 
 #+end_src
+
+** Org-Appear
+
+#+begin_src emacs-lisp
+
+  (use-package org-appear
+  :commands (org-appear-mode)
+  :hook (org-mode . org-appear-mode)
+  :config
+  (setq org-hide-emphasis-markers t)
+  (setq org-appear-autoemphasis t
+        org-appear-autolinks    t
+        org-appear-autosubmarkers t))
+  
+#+end_src
+
 * Development
 
 ** Languages
