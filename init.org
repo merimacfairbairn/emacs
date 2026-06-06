@@ -1,12 +1,13 @@
 #+title: Emacs From Scratch Configuration
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el :mkdirp yes
 
-* TODO Improvements
+* TODO Improvements [7/14] 
 - [X] Add redo ability
 - [X] Add in-line suggestions
 - [X] Org-specific bindings
-- [ ] Mode dependent bindings
+- [X] Mode dependent bindings (for org-mode specifically)
 - [X] Ord-modern
+- [ ] Better org-modern styles (specifically the headers)
 - [X] Javelline (or any Harpoon equivalent)
 - [X] Gc from nvim
 - [ ] Better copy and paste in insert
@@ -14,7 +15,9 @@
 - [ ] Org-roam
 - [ ] Easy link paste from clipboard
 - [ ] Easy image paste from clipboard
-
+- [ ] Org-appear for better styling
+ -----
+ 
 * Fonts and BG
 
 #+begin_src emacs-lisp
@@ -195,6 +198,9 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
     (efs/local-leader-keys
       :keymaps 'org-mode-map
 
+      ;; Checkboxes
+      "SPC" '(org-toggle-checkbox :wk "toggle checkbox")
+
       ;; TODOs
       "t"  '(org-todo :wk "todo")
 
@@ -202,6 +208,9 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
       "d"  '(org-deadline :wk "deadline")
       "s"  '(org-schedule :wk "schedule")
       "T"  '(org-time-stamp :wk "timestamp")
+
+      ;; Edit source
+      "'" '(org-edit-src-code :wk "edit source")
 
       ;; Headings
       "h"  '(:ignore t :wk "heading")
@@ -265,8 +274,6 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
       "SPC" '(execute-extended-command :which-key "M-x")
       "/" '(consult-ripgrep :which-key "Search Project")
       "!" '(shell-command :which-key "shell")
-      "x" '(ctl-x-map :which-key "execute")
-      "c" '(mode-specific-map :which-key "mode map")
       
       ;; HELP
       "h" '(:ignore t :which-key "help")

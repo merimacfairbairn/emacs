@@ -118,6 +118,9 @@
   (efs/local-leader-keys
     :keymaps 'org-mode-map
 
+    ;; Checkboxes
+    "SPC" '(org-toggle-checkbox :wk "toggle checkbox")
+
     ;; TODOs
     "t"  '(org-todo :wk "todo")
 
@@ -125,6 +128,9 @@
     "d"  '(org-deadline :wk "deadline")
     "s"  '(org-schedule :wk "schedule")
     "T"  '(org-time-stamp :wk "timestamp")
+
+    ;; Edit source
+    "'" '(org-edit-src-code :wk "edit source")
 
     ;; Headings
     "h"  '(:ignore t :wk "heading")
@@ -188,8 +194,6 @@
     "SPC" '(execute-extended-command :which-key "M-x")
     "/" '(consult-ripgrep :which-key "Search Project")
     "!" '(shell-command :which-key "shell")
-    "x" '(ctl-x-map :which-key "execute")
-    "c" '(mode-specific-map :which-key "mode map")
     
     ;; HELP
     "h" '(:ignore t :which-key "help")
