@@ -1,13 +1,13 @@
 #+title: Emacs From Scratch Configuration
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el :mkdirp yes
 
-* TODO Improvements [8/14] 
+* TODO Improvements [9/14] 
 - [X] Add redo ability
 - [X] Add in-line suggestions
 - [X] Org-specific bindings
 - [X] Mode dependent bindings (for org-mode specifically)
 - [X] Ord-modern
-- [ ] Better org-modern styles (specifically the headers)
+- [X] Better org-modern styles (specifically the headers)
 - [X] Javelline (or any Harpoon equivalent)
 - [X] Gc from nvim
 - [ ] Better copy and paste in insert
@@ -590,7 +590,7 @@ This section contains the basic configuration for =org-mode= plus the configurat
     :commands (org-capture org-agenda)
     :hook (org-mode . efs/org-mode-setup)
     :config
-    (setq org-ellipsis " ")
+    (setq org-ellipsis " ")
 
     (setq org-agenda-start-with-log-mode t)
     (setq org-log-done 'time)
@@ -810,6 +810,8 @@ Better looking org files
 
   (use-package org-modern
   :ensure t
+  :config
+  (setopt org-modern-star nil)
   :hook
   (org-mode . org-modern-mode)
   (org-agenda-finalize . org-modern-agenda))

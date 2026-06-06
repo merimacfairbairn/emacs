@@ -428,7 +428,7 @@
   :commands (org-capture org-agenda)
   :hook (org-mode . efs/org-mode-setup)
   :config
-  (setq org-ellipsis " ")
+  (setq org-ellipsis " ")
 
   (setq org-agenda-start-with-log-mode t)
   (setq org-log-done 'time)
@@ -593,6 +593,8 @@
 
 (use-package org-modern
 :ensure t
+:config
+(setopt org-modern-star nil)
 :hook
 (org-mode . org-modern-mode)
 (org-agenda-finalize . org-modern-agenda))
