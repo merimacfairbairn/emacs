@@ -704,19 +704,6 @@ This section contains the basic configuration for =org-mode= plus the configurat
 
 #+end_src
 
-*** Nicer Heading Bullets
-
-[[https://github.com/sabof/org-bullets][org-bullets]] replaces the heading stars in =org-mode= buffers with nicer looking characters that you can control.  Another option for this is [[https://github.com/integral-dw/org-superstar-mode][org-superstar-mode]] which we may cover in a later video.
-
-#+begin_src emacs-lisp
-
-  (use-package org-bullets
-    :hook (org-mode . org-bullets-mode)
-    :custom
-    (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
-
-#+end_src
-
 *** Center Org Buffers
 
 We use [[https://github.com/joostkremers/visual-fill-column][visual-fill-column]] to center =org-mode= buffers for a more pleasing writing experience as it centers the contents of the buffer horizontally to seem more like you are editing a document.  This is really a matter of personal preference so you can remove the block below if you don't like the behavior.
@@ -807,7 +794,8 @@ Better looking org files
   (use-package org-modern
   :ensure t
   :config
-  (setopt org-modern-star nil)
+  (setopt org-modern-star 'replace)
+  (setopt org-modern-replace-stars "◉○●")
   :hook
   (org-mode . org-modern-mode)
   (org-agenda-finalize . org-modern-agenda))

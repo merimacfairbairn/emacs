@@ -540,11 +540,6 @@
 
   (efs/org-font-setup))
 
-(use-package org-bullets
-  :hook (org-mode . org-bullets-mode)
-  :custom
-  (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●")))
-
 (defun efs/org-mode-visual-fill ()
   (setq visual-fill-column-width 100
         visual-fill-column-center-text t)
@@ -590,7 +585,8 @@
 (use-package org-modern
 :ensure t
 :config
-(setopt org-modern-star nil)
+(setopt org-modern-star 'replace)
+(setopt org-modern-replace-stars "◉○●")
 :hook
 (org-mode . org-modern-mode)
 (org-agenda-finalize . org-modern-agenda))
