@@ -79,6 +79,11 @@
 (set-frame-parameter (selected-frame) 'fullscreen 'maximized)
 (add-to-list 'default-frame-alist '(fullscreen . maximized))
 
+;; Disable GUI prompts
+(setq use-dialog-box nil)
+(setq use-file-dialog-box nil)
+(setq use-short-answers t)  ;y/n
+
 ;; Disable line numbers for some modes
 (dolist (mode '(org-mode-hook
                 term-mode-hook
