@@ -1,7 +1,7 @@
 #+title: Emacs From Scratch Configuration
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el :mkdirp yes
 
-* TODO Improvements [9/14] 
+* TODO Improvements [11/16] 
 - [X] Add redo ability
 - [X] Add in-line suggestions
 - [X] Org-specific bindings
@@ -16,6 +16,9 @@
 - [ ] Easy link paste from clipboard
 - [ ] Easy image paste from clipboard
 - [X] Org-appear for better styling
+- [X] Projectile with consult and mappings
+- [X] Better fonts for org-mode with gruvbox (and mixed-pitch)
+
  -----
  
 * Fonts and BG
@@ -161,17 +164,39 @@ This section configures basic UI settings that remove unneeded elements to make 
 
 ** Font Configuration
 
-I am using the [[https://github.com/tonsky/FiraCode][Fira Code]] and [[https://fonts.google.com/specimen/Cantarell][Cantarell]] fonts for this configuration which will more than likely need to be installed on your machine.  Both can usually be found in the various Linux distro package managers or downloaded from the links above.
-
 #+begin_src emacs-lisp
 
 (set-face-attribute 'default nil :font "Iosevka" :height efs/default-font-size)
 
 ;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font "Iosevka" :height efs/default-font-size)
+(set-face-attribute 'fixed-pitch nil :font "Iosevka Curly" :height efs/default-font-size)
 
 ;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil :font "Iosevka Aile" :height efs/default-variable-font-size :weight 'regular)
+(set-face-attribute 'variable-pitch nil :font "Open Sans" :height efs/default-variable-font-size :weight 'regular)
+
+#+end_src
+
+*** Mixed-pitch mode
+
+Mixed pitch to keep variable font where sensible
+
+#+begin_src emacs-lisp
+
+  (use-package mixed-pitch
+    :hook (org-mode . mixed-pitch-mode)
+    :config
+    ;; Ensure certain faces remain fixed-pitch
+    (setq mixed-pitch-fixed-pitch-faces
+          '(org-code
+            org-block
+            org-table
+            org-verbatim
+            org-meta-line
+            org-checkbox
+            line-number
+            line-number-current-line))
+    ;; Optionally adjust the height of variable-pitch text
+    (setq mixed-pitch-set-height t))
 
 #+end_src
 
@@ -787,7 +812,8 @@ This snippet adds a hook to =org-mode= buffers so that =efs/org-babel-tangle-con
 #+end_src
 
 ** Org-Modern
-Better looking org files
+
+Better-looking org files
 
 #+begin_src emacs-lisp
 

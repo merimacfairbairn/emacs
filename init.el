@@ -96,10 +96,26 @@
 (set-face-attribute 'default nil :font "Iosevka" :height efs/default-font-size)
 
 ;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font "Iosevka" :height efs/default-font-size)
+(set-face-attribute 'fixed-pitch nil :font "Iosevka Curly" :height efs/default-font-size)
 
 ;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil :font "Iosevka Aile" :height efs/default-variable-font-size :weight 'regular)
+(set-face-attribute 'variable-pitch nil :font "Open Sans" :height efs/default-variable-font-size :weight 'regular)
+
+(use-package mixed-pitch
+  :hook (org-mode . mixed-pitch-mode)
+  :config
+  ;; Ensure certain faces remain fixed-pitch
+  (setq mixed-pitch-fixed-pitch-faces
+        '(org-code
+          org-block
+          org-table
+          org-verbatim
+          org-meta-line
+          org-checkbox
+          line-number
+          line-number-current-line))
+  ;; Optionally adjust the height of variable-pitch text
+  (setq mixed-pitch-set-height t))
 
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
@@ -712,6 +728,9 @@
   (when (file-directory-p "~/Org/")
     (setq projectile-project-search-path '("~/Org/")))
   (setq projectile-switch-project-action #'projectile-dired))
+
+(use-package consult-projectile
+  )
 
 (use-package magit
   :commands magit-status
