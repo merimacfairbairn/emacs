@@ -1050,6 +1050,9 @@ Modern completions stack
     (when (file-directory-p "~/Org/")
       (setq projectile-project-search-path '("~/Org/")))
     (setq projectile-switch-project-action #'projectile-dired))
+
+  (use-package consult-projectile
+    )
 #+end_src
 
 ** Magit
