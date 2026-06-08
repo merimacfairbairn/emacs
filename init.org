@@ -844,6 +844,24 @@ Better-looking org files
 
 #+end_src
 
+** Spellchecker
+
+[[https:https://github.com/minad/jinx][Jinx]] seems to be the way to go for spellchecking in emacs nowadays.
+
+Dependencies:
+1. =enchant= (installed via pacman)
+2. =hunspell= (or any dictionary)
+
+#+begin_src emacs-lisp
+
+  (use-package jinx
+    :hook (text-mode . jinx-mode)
+    :bind ([remap ispell-word] . jinx-correct)
+    :custom
+    (jinx-languages "en_GB"))
+
+#+end_src
+
 * Development
 
 ** Languages

@@ -636,6 +636,12 @@
 	org-appear-autolinks    t
 	org-appear-autosubmarkers t))
 
+(use-package jinx
+  :hook (text-mode . jinx-mode)
+  :bind ([remap ispell-word] . jinx-correct)
+  :custom
+  (jinx-languages "en_GB"))
+
 (defun efs/lsp-mode-setup ()
   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
   (lsp-headerline-breadcrumb-mode))
