@@ -1,26 +1,6 @@
 #+title: Emacs From Scratch Configuration
 #+PROPERTY: header-args:emacs-lisp :tangle ./init.el :mkdirp yes
 
-* TODO Improvements [11/16] 
-- [X] Add redo ability
-- [X] Add in-line suggestions
-- [X] Org-specific bindings
-- [X] Mode dependent bindings (for org-mode specifically)
-- [X] Ord-modern
-- [X] Better org-modern styles (specifically the headers)
-- [X] Javelline (or any Harpoon equivalent)
-- [X] Gc from nvim
-- [ ] Better copy and paste in insert
-- [ ] Add better org-mode captures
-- [ ] Org-roam
-- [ ] Easy link paste from clipboard
-- [ ] Easy image paste from clipboard
-- [X] Org-appear for better styling
-- [X] Projectile with consult and mappings
-- [X] Better fonts for org-mode with gruvbox (and mixed-pitch)
-
-  -----
- 
 * Fonts and BG
 
 #+begin_src emacs-lisp
@@ -634,10 +614,6 @@ This section contains the basic configuration for =org-mode= plus the configurat
           '((sequence "TODO(t@/!)" "CURR(c@/!)" "HOLD(h@/!)" "|" "DONE(d@/@)" "ABRT(a@/@)")
             (sequence "MEET(m@/!)" "|" "DONE(d@/@)" "ABRT(a@/@)")))
 
-    (setq org-refile-targets
-          '(("archive.org" :maxlevel . 1)
-            ("inbox.org" :maxlevel . 1)))
-
     ;; Save Org buffers after refiling!
     (advice-add 'org-refile :after 'org-save-all-org-buffers)
 
@@ -665,7 +641,7 @@ This section contains the basic configuration for =org-mode= plus the configurat
       (let ((subtree-end (save-excursion (org-end-of-subtree t))))
         (if (string= (org-entry-get nil proprety) value)
             subtree-end
-    	nil)))
+      	nil)))
 
     ;; This simple sorting strategy works for my purposes
     (setopt org-agenda-sorting-strategy
@@ -679,7 +655,7 @@ This section contains the basic configuration for =org-mode= plus the configurat
 
     ;; Do not display filetags like =@PERSO= or =@PROJECT= in the agenda views
     (setq org-agenda-hide-tags-regexp
-  	(mapconcat (lambda (x) x) efs/org-filetags "\\|"))
+    	(mapconcat (lambda (x) x) efs/org-filetags "\\|"))
 
     ;; Configure custom agenda views
     (setq efs/org-perso-agenda-views
@@ -703,7 +679,7 @@ This section contains the basic configuration for =org-mode= plus the configurat
               ;; 3) In Progress
               (tags-todo "@PERSO+@CURR|@PERSO+TODO={CURR}|@PERSO+TODO={HOLD}"
                          ((org-agenda-overriding-header "In Progress:")
-      			(org-agenda-skip-function '(or ;; (org-agenda-skip-entry-if 'scheduled)
+        			(org-agenda-skip-function '(or ;; (org-agenda-skip-entry-if 'scheduled)
                                                       ;; (org-agenda-skip-entry-if 'deadline)
                                                       (efs/agenda-skip-property "STYLE" "habit")
                                                       (efs/agenda-skip-tags "monthlygoals")))))
@@ -715,7 +691,7 @@ This section contains the basic configuration for =org-mode= plus the configurat
               ;; 5) Next
               (tags-todo "@PERSO+TODO={TODO}-@REFILE"
                          ((org-agenda-overriding-header "Next:")
-      			(org-agenda-skip-function '(or (org-agenda-skip-entry-if 'scheduled)
+        			(org-agenda-skip-function '(or (org-agenda-skip-entry-if 'scheduled)
                                                          (org-agenda-skip-entry-if 'deadline)
                                                          (efs/agenda-skip-property "STYLE" "habit")
                                                          (efs/agenda-skip-tags "monthlygoals")))))
@@ -726,7 +702,13 @@ This section contains the basic configuration for =org-mode= plus the configurat
                      (org-agenda-skip-function '(efs/agenda-skip-tags "@WORK" "monthlygoals"))))))))
 
     (setq org-agenda-custom-commands
-      	(append org-agenda-custom-commands efs/org-perso-agenda-views))
+        	(append org-agenda-custom-commands efs/org-perso-agenda-views))
+
+    (setq org-refile-targets
+  	`(("inbox.org" :maxlevel . 5)
+            ("perso.org" :maxlevel . 5)
+            (,(directory-files-recursively "~/Org/projects/" "\\.org$")
+             :maxlevel . 5)))
 
     (setq org-capture-templates
           `(("t" "Tasks / Projects")

@@ -463,10 +463,6 @@
         '((sequence "TODO(t@/!)" "CURR(c@/!)" "HOLD(h@/!)" "|" "DONE(d@/@)" "ABRT(a@/@)")
           (sequence "MEET(m@/!)" "|" "DONE(d@/@)" "ABRT(a@/@)")))
 
-  (setq org-refile-targets
-        '(("archive.org" :maxlevel . 1)
-          ("inbox.org" :maxlevel . 1)))
-
   ;; Save Org buffers after refiling!
   (advice-add 'org-refile :after 'org-save-all-org-buffers)
 
@@ -494,7 +490,7 @@
     (let ((subtree-end (save-excursion (org-end-of-subtree t))))
       (if (string= (org-entry-get nil proprety) value)
           subtree-end
-  	nil)))
+    	nil)))
 
   ;; This simple sorting strategy works for my purposes
   (setopt org-agenda-sorting-strategy
@@ -508,7 +504,7 @@
 
   ;; Do not display filetags like =@PERSO= or =@PROJECT= in the agenda views
   (setq org-agenda-hide-tags-regexp
-	(mapconcat (lambda (x) x) efs/org-filetags "\\|"))
+  	(mapconcat (lambda (x) x) efs/org-filetags "\\|"))
 
   ;; Configure custom agenda views
   (setq efs/org-perso-agenda-views
@@ -532,7 +528,7 @@
             ;; 3) In Progress
             (tags-todo "@PERSO+@CURR|@PERSO+TODO={CURR}|@PERSO+TODO={HOLD}"
                        ((org-agenda-overriding-header "In Progress:")
-    			(org-agenda-skip-function '(or ;; (org-agenda-skip-entry-if 'scheduled)
+      			(org-agenda-skip-function '(or ;; (org-agenda-skip-entry-if 'scheduled)
                                                     ;; (org-agenda-skip-entry-if 'deadline)
                                                     (efs/agenda-skip-property "STYLE" "habit")
                                                     (efs/agenda-skip-tags "monthlygoals")))))
@@ -544,7 +540,7 @@
             ;; 5) Next
             (tags-todo "@PERSO+TODO={TODO}-@REFILE"
                        ((org-agenda-overriding-header "Next:")
-    			(org-agenda-skip-function '(or (org-agenda-skip-entry-if 'scheduled)
+      			(org-agenda-skip-function '(or (org-agenda-skip-entry-if 'scheduled)
                                                        (org-agenda-skip-entry-if 'deadline)
                                                        (efs/agenda-skip-property "STYLE" "habit")
                                                        (efs/agenda-skip-tags "monthlygoals")))))
@@ -555,7 +551,13 @@
                    (org-agenda-skip-function '(efs/agenda-skip-tags "@WORK" "monthlygoals"))))))))
 
   (setq org-agenda-custom-commands
-    	(append org-agenda-custom-commands efs/org-perso-agenda-views))
+      	(append org-agenda-custom-commands efs/org-perso-agenda-views))
+
+  (setq org-refile-targets
+	`(("inbox.org" :maxlevel . 5)
+          ("perso.org" :maxlevel . 5)
+          (,(directory-files-recursively "~/Org/projects/" "\\.org$")
+           :maxlevel . 5)))
 
   (setq org-capture-templates
         `(("t" "Tasks / Projects")
