@@ -309,6 +309,10 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
       "be" '(erase-buffer :which-key "erase")
       "bs" '(scratch-buffer :which-key "scratch")
 
+      ;; CAPTURES
+      "c" '(:ignore t :wk "captures")
+      "cc" '(org-capture :wk "menu")
+
       ;; WINDOWS
       "w" '(:ignore t :wk "windows")
       "wh" '(evil-window-left :wk "left")
