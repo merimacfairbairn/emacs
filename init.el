@@ -564,29 +564,15 @@
            :maxlevel . 5)))
 
   (setq org-capture-templates
-        `(("t" "Tasks / Projects")
-          ("tt" "Task" entry (file+olp "~/Org/inbox.org" "Inbox")
-           "* TODO %?\n  %U\n  %a\n  %i" :empty-lines 1)
+        `(("p" "Perso Capture")
+          ("pt" "Task" entry (file "~/Org/inbox.org")
+           "* TODO [#B] %^{task} %^g\n  :LOGBOOK:\n  - CREATED: %U\n  :END:\n%?\n")
 
-          ("j" "Journal Entries")
-          ("jj" "Journal" entry
-           (file+olp+datetree "~/Org/journal.org")
-           "\n* %<%I:%M %p> - Journal :journal:\n\n%?\n\n"
-           ;; ,(dw/read-file-as-string "~/Notes/Templates/Daily.org")
-           :clock-in :clock-resume
-           :empty-lines 1)
-          ("jm" "Meeting" entry
-           (file+olp+datetree "~/Org/meetings.org")
-           "* %<%I:%M %p> - %a :meetings:\n\n%?\n\n"
-           :clock-in :clock-resume
-           :empty-lines 1)
+          ("pn" "Note" entry (file "~/Org/inbox.org")
+           "* %^{item} %^g\n  :LOGBOOK:\n  - CREATED: %U\n  :END:\n%?\n")
 
-          ("w" "Workflows")
-          ("we" "Checking Email" entry (file+olp+datetree "~/Org/journal.org")
-           "* Checking Email :email:\n\n%?" :clock-in :clock-resume :empty-lines 1)))
-
-  (define-key global-map (kbd "C-c j")
-              (lambda () (interactive) (org-capture nil "jj")))
+          ("pm" "Meeting" entry (file "~/Org/inbox.org")
+           "* MEET [#A] %^{meeting} %^g\n  SCHEDULED: %^T\n  :LOGBOOK:\n  - CREATED: %U\n  :END:\n%?\n")))
 
   (efs/org-font-setup))
 
