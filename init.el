@@ -554,8 +554,8 @@
       	(append org-agenda-custom-commands efs/org-perso-agenda-views))
 
   (setq org-refile-targets
-	`(("inbox.org" :maxlevel . 5)
-          ("perso.org" :maxlevel . 5)
+	`(("~/Org/inbox.org" :maxlevel . 5)
+          ("~/Org/perso.org" :maxlevel . 5)
           (,(directory-files-recursively "~/Org/projects/" "\\.org$")
            :maxlevel . 5)))
 
