@@ -600,51 +600,54 @@ This section contains the basic configuration for =org-mode= plus the configurat
 
 #+begin_src emacs-lisp
 
-    (defun efs/org-mode-setup ()
-      (org-indent-mode)
-      (variable-pitch-mode 1)
-      (visual-line-mode 1))
+  (defun efs/org-mode-setup ()
+    (org-indent-mode)
+    (variable-pitch-mode 1)
+    (visual-line-mode 1))
 
-    (use-package org
-      :pin org
-      :commands (org-capture org-agenda)
-      :hook (org-mode . efs/org-mode-setup)
-      :config
-      (setq org-ellipsis " ")
+  (use-package org
+    :pin org
+    :commands (org-capture org-agenda)
+    :hook (org-mode . efs/org-mode-setup)
+    :config
+    (setq org-ellipsis " ")
 
-      (setq org-agenda-start-with-log-mode t)
-      (setq org-log-done 'time)
-      (setq org-log-into-drawer t)
+    (setq org-agenda-start-with-log-mode t)
+    (setq org-log-done 'time)
+    (setq org-log-into-drawer t)
 
-      (setq org-effort-property "EFFORT")
-      
-      (setq org-agenda-files
-        	'("~/Org/inbox.org"
-              "~/Org/perso.org"
-              "~/Org/habits.org"))
+    (setq org-effort-property "EFFORT")
+    
+    (setq org-agenda-files
+        (append
+         '("~/Org/inbox.org"
+             "~/Org/perso.org"
+             "~/Org/habits.org")
+         (directory-files-recursively "~/Org/archives/" "\\.org$")
+         (directory-files-recursively "~/Org/projects/" "\\.org$")))
 
-      (require 'org-habit)
-      (add-to-list 'org-modules 'org-habit)
-      (setq org-habit-graph-column 60)
+    (require 'org-habit)
+    (add-to-list 'org-modules 'org-habit)
+    (setq org-habit-graph-column 60)
 
-      (setq org-todo-keywords
-            '((sequence "TODO(t@/!)" "CURR(c@/!)" "HOLD(h@/!)" "|" "DONE(d@/@)" "ABRT(a@/@)")
-              (sequence "MEET(m@/!)" "|" "DONE(d@/@)" "ABRT(a@/@)")))
+    (setq org-todo-keywords
+          '((sequence "TODO(t@/!)" "CURR(c@/!)" "HOLD(h@/!)" "|" "DONE(d@/@)" "ABRT(a@/@)")
+            (sequence "MEET(m@/!)" "|" "DONE(d@/@)" "ABRT(a@/@)")))
 
-      (setq org-refile-targets
+    (setq org-refile-targets
         	'(("archive.org" :maxlevel . 1)
          	  ("inbox.org" :maxlevel . 1)))
 
-      ;; Save Org buffers after refiling!
-      (advice-add 'org-refile :after 'org-save-all-org-buffers)
+    ;; Save Org buffers after refiling!
+    (advice-add 'org-refile :after 'org-save-all-org-buffers)
 
-      (setq org-tag-alist
+    (setq org-tag-alist
     	'(("@URGENT" . ?u) ;; Items that should be handled immediately
-              ("@REFILE" . ?r) ;; Items that should be moved or processed later
-              ("@CURR" . ?c))) ;; Items currently in progress
+            ("@REFILE" . ?r) ;; Items that should be moved or processed later
+            ("@CURR" . ?c))) ;; Items currently in progress
 
-      ;; Configure custom agenda views
-      (setq org-agenda-custom-commands
+    ;; Configure custom agenda views
+    (setq org-agenda-custom-commands
         	'(("d" "Dashboard"
          	   ((agenda "" ((org-deadline-warning-days 7)))
          	    (todo "NEXT"
@@ -691,32 +694,32 @@ This section contains the basic configuration for =org-mode= plus the configurat
          		  ((org-agenda-overriding-header "Cancelled Projects")
          		   (org-agenda-files org-agenda-files)))))))
 
-      (setq org-capture-templates
+    (setq org-capture-templates
         	`(("t" "Tasks / Projects")
          	  ("tt" "Task" entry (file+olp "~/Org/inbox.org" "Inbox")
-               "* TODO %?\n  %U\n  %a\n  %i" :empty-lines 1)
+             "* TODO %?\n  %U\n  %a\n  %i" :empty-lines 1)
 
          	  ("j" "Journal Entries")
          	  ("jj" "Journal" entry
-               (file+olp+datetree "~/Org/journal.org")
-               "\n* %<%I:%M %p> - Journal :journal:\n\n%?\n\n"
-               ;; ,(dw/read-file-as-string "~/Notes/Templates/Daily.org")
-               :clock-in :clock-resume
-               :empty-lines 1)
+             (file+olp+datetree "~/Org/journal.org")
+             "\n* %<%I:%M %p> - Journal :journal:\n\n%?\n\n"
+             ;; ,(dw/read-file-as-string "~/Notes/Templates/Daily.org")
+             :clock-in :clock-resume
+             :empty-lines 1)
          	  ("jm" "Meeting" entry
-               (file+olp+datetree "~/Org/meetings.org")
-               "* %<%I:%M %p> - %a :meetings:\n\n%?\n\n"
-               :clock-in :clock-resume
-               :empty-lines 1)
+             (file+olp+datetree "~/Org/meetings.org")
+             "* %<%I:%M %p> - %a :meetings:\n\n%?\n\n"
+             :clock-in :clock-resume
+             :empty-lines 1)
 
          	  ("w" "Workflows")
          	  ("we" "Checking Email" entry (file+olp+datetree "~/Org/journal.org")
-               "* Checking Email :email:\n\n%?" :clock-in :clock-resume :empty-lines 1)))
+             "* Checking Email :email:\n\n%?" :clock-in :clock-resume :empty-lines 1)))
 
-      (define-key global-map (kbd "C-c j")
+    (define-key global-map (kbd "C-c j")
          	      (lambda () (interactive) (org-capture nil "jj")))
 
-      (efs/org-font-setup))
+    (efs/org-font-setup))
 
 #+end_src
 
