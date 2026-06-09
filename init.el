@@ -117,6 +117,403 @@
   ;; Optionally adjust the height of variable-pitch text
   (setq mixed-pitch-set-height t))
 
+(use-package command-log-mode
+  :commands command-log-mode)
+
+(use-package doom-themes
+  :init (load-theme 'doom-gruvbox t))
+
+(use-package all-the-icons)
+
+(use-package doom-modeline
+  :init (doom-modeline-mode 1)
+  :custom ((doom-modeline-height 15)))
+
+(use-package which-key
+  :defer 0
+  :diminish which-key-mode
+  :config
+  (which-key-mode)
+  (setq which-key-idle-delay 1))
+
+;; Completion UI
+(use-package vertico
+  :ensure t
+  :bind (:map vertico-map
+	      ("C-j" . vertico-next)
+	      ("C-k" . vertico-previous)
+	      ("C-f" . vertico-exit)
+	      :map minibuffer-local-map
+	      ("M-h" . backward-kill-word))
+  :custom
+  (vertico-cycle t)
+  :init
+  (vertico-mode))
+
+(use-package savehist
+  :init
+  (savehist-mode))
+
+;; Rich annotations
+(use-package marginalia
+  :after vertico
+  :ensure t
+  :init
+  (marginalia-mode))
+
+;; Better matching
+(use-package orderless
+  :custom
+  (completion-styles '(orderless basic))
+  (completion-category-defaults nil)
+  (completion-category-overrides
+   '((file (styles partial-completion)))))
+
+;; Counsel replacement
+(use-package consult
+  :bind (("C-s" . consult-line)
+         ("C-M-j" . consult-buffer)
+         :map minibuffer-local-map
+         ("C-r" . consult-history)))
+
+;; Optional but highly recommended
+(use-package embark
+  :bind
+  (("C-." . embark-act)
+   ("C-;" . embark-dwim)
+   ("C-h B" . embark-bindings)))
+
+(use-package embark-consult
+  :after (embark consult))
+
+(use-package helpful
+  :commands (helpful-callable helpful-variable helpful-command helpful-key)
+  :bind
+  ([remap describe-function] . helpful-callable)
+  ([remap describe-command] . helpful-command)
+  ([remap describe-variable] . helpful-variable)
+  ([remap describe-key] . helpful-key))
+
+(use-package hydra
+  :defer t)
+
+(defhydra hydra-text-scale (:timeout 4)
+  "scale text"
+  ("j" text-scale-increase "in")
+  ("k" text-scale-decrease "out")
+  ("f" nil "finished" :exit t))
+
+(defun efs/org-font-setup ()
+  ;; Replace list hyphen with dot
+  (font-lock-add-keywords 'org-mode
+                          '(("^ *\\([-]\\) "
+                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
+
+  ;; Set faces for heading levels
+  (dolist (face '((org-level-1 . 1.2)
+                  (org-level-2 . 1.1)
+                  (org-level-3 . 1.05)
+                  (org-level-4 . 1.0)
+                  (org-level-5 . 1.1)
+                  (org-level-6 . 1.1)
+                  (org-level-7 . 1.1)
+                  (org-level-8 . 1.1)))
+    (set-face-attribute (car face) nil :font "Iosevka Aile" :weight 'regular :height (cdr face)))
+
+  ;; Ensure that anything that should be fixed-pitch in Org files appears that way
+  (set-face-attribute 'org-block nil    :foreground nil :inherit 'fixed-pitch)
+  (set-face-attribute 'org-table nil    :inherit 'fixed-pitch)
+  (set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
+  (set-face-attribute 'org-code nil     :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-table nil    :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
+  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
+  (set-face-attribute 'org-checkbox nil  :inherit 'fixed-pitch)
+  (set-face-attribute 'line-number nil :inherit 'fixed-pitch)
+  (set-face-attribute 'line-number-current-line nil :inherit 'fixed-pitch))
+
+(defconst efs/org-directory
+  (expand-file-name "~/Org/")
+  "Root directory for Org files.")
+
+;;;; Directories
+
+(defconst efs/org-archives-directory
+  (expand-file-name "archives/" efs/org-directory))
+
+(defconst efs/org-projects-directory
+  (expand-file-name "projects/" efs/org-directory))
+
+(defconst efs/org-logbooks-directory
+  (expand-file-name "logbooks/" efs/org-archives-directory))
+
+(defconst efs/org-archive-projects-directory
+  (expand-file-name "projects/" efs/org-archives-directory))
+
+;;;; Files
+
+(defconst efs/org-inbox-file
+  (expand-file-name "inbox.org" efs/org-directory))
+
+(defconst efs/org-perso-file
+  (expand-file-name "perso.org" efs/org-directory))
+
+(defconst efs/org-habits-file
+  (expand-file-name "habits.org" efs/org-directory))
+
+(defconst efs/org-logbook-archive-file
+  (expand-file-name "logbook.org_archive"
+                    efs/org-logbooks-directory))
+
+(defun efs/org-project-files ()
+  "Return all Org files in the projects directory."
+  (directory-files-recursively
+   efs/org-projects-directory
+   "\\.org$"))
+
+(defun efs/org-archive-files ()
+  "Return all Org files in the archives directory."
+  (directory-files-recursively
+   efs/org-archives-directory
+   "\\.org$"))
+
+(use-package org
+  :pin org
+  :commands (org-capture org-agenda)
+  :hook (org-mode . efs/org-mode-setup)
+  :config
+  (setq org-ellipsis " ")
+
+  (setq org-agenda-start-with-log-mode t)
+  (setq org-log-done 'time)
+  (setq org-log-into-drawer t)
+
+  (setq org-effort-property "EFFORT")
+
+  (setq org-agenda-files
+        (append
+         (list efs/org-inbox-file
+               efs/org-perso-file
+               efs/org-habits-file)
+         (efs/org-archive-files)
+         (efs/org-project-files)))
+
+  (require 'org-habit)
+  (add-to-list 'org-modules 'org-habit)
+  (setq org-habit-graph-column 60)
+
+  (setq org-todo-keywords
+        '((sequence "TODO(t@/!)" "CURR(c@/!)" "HOLD(h@/!)"
+                    "|"
+                    "DONE(d@/@)" "ABRT(a@/@)")
+          (sequence "MEET(m@/!)"
+                    "|"
+                    "DONE(d@/@)" "ABRT(a@/@)")))
+
+  ;; Save Org buffers after refiling
+  (advice-add 'org-refile :after #'org-save-all-org-buffers)
+
+  (setq org-tag-alist
+        '(("@URGENT" . ?u)
+          ("@REFILE" . ?r)
+          ("@CURR" . ?c)))
+
+  (setq efs/org-filetags
+        '("@PERSO" "@PROJECT" "@WORK"))
+
+  (defun efs/agenda-skip-tags (&rest args)
+    "Skip tags passed as ARGS in the agenda view."
+    (let (beg end)
+      (org-back-to-heading t)
+      (setq beg (point)
+            end (progn (outline-next-heading)
+                       (1- (point))))
+      (goto-char beg)
+      (setq alltags (prin1-to-string (org-get-tags)))
+      (goto-char beg)
+      (if (-some (lambda (x)
+                   (string-match x alltags))
+                 args)
+          end)))
+
+  (defun efs/agenda-skip-property (property value)
+    "Skip an agenda entry if PROPERTY equals VALUE."
+    (let ((subtree-end (save-excursion
+                         (org-end-of-subtree t))))
+      (if (string=
+           (org-entry-get nil property)
+           value)
+          subtree-end
+        nil)))
+
+  (setopt org-agenda-sorting-strategy
+          '((agenda time-up deadline-up scheduled-up todo-state-up priority-down)
+            (todo todo-state-up priority-down deadline-up)
+            (tags todo-state-up priority-down deadline-up)
+            (search todo-state-up priority-down deadline-up)))
+
+  (setq org-agenda-prefix-format
+        "%-10:c %-12t %-6e %s")
+
+  (setq org-agenda-hide-tags-regexp
+        (mapconcat #'identity
+                   efs/org-filetags
+                   "\\|"))
+
+  (setq efs/org-perso-agenda-views
+        '(("p" "Perso agenda"
+           (
+            (agenda ""
+                    ((org-agenda-show-all-dates nil)
+                     (org-agenda-use-time-grid nil)
+                     (org-agenda-span 14)
+                     (org-agenda-start-on-weekday nil)
+                     (org-deadline-warning-days 14)
+                     (org-agenda-show-log t)
+                     (org-agenda-skip-function
+                      '(efs/agenda-skip-tags "@WORK"))))
+
+            (tags "@PERSO+@REFILE|@PERSO+@URGENT"
+                  ((org-agenda-overriding-header
+                    "Inbox || Urgent:")))
+
+            (tags-todo "@PERSO+@CURR|@PERSO+TODO={CURR}|@PERSO+TODO={HOLD}"
+                       ((org-agenda-overriding-header
+                         "In Progress:")
+                        (org-agenda-skip-function
+                         '(or
+                           (efs/agenda-skip-property
+                            "STYLE"
+                            "habit")
+                           (efs/agenda-skip-tags
+                            "monthlygoals")))))
+
+            (tags "@PERSO+monthlygoals-TODO={DONE}"
+                  ((org-agenda-overriding-header
+                    "Monthly Goals:")))
+
+            (tags-todo "@PERSO+TODO={TODO}-@REFILE"
+                       ((org-agenda-overriding-header
+                         "Next:")
+                        (org-agenda-skip-function
+                         '(or
+                           (org-agenda-skip-entry-if
+                            'scheduled)
+                           (org-agenda-skip-entry-if
+                            'deadline)
+                           (efs/agenda-skip-property
+                            "STYLE"
+                            "habit")
+                           (efs/agenda-skip-tags
+                            "monthlygoals")))))
+
+            (todo "DONE|ABRT"
+                  ((org-agenda-overriding-header
+                    "Completed:")
+                   (org-agenda-skip-function
+                    '(efs/agenda-skip-tags
+                      "@WORK"
+                      "monthlygoals"))))))))
+
+  (setq org-agenda-custom-commands
+        (append org-agenda-custom-commands
+                efs/org-perso-agenda-views))
+
+  (setq org-refile-targets
+        `((,efs/org-inbox-file
+           :maxlevel . 5)
+          (,efs/org-perso-file
+           :maxlevel . 5)
+          (,(efs/org-project-files)
+           :maxlevel . 5)))
+
+  (setq org-capture-templates
+        `(("p" "Perso Capture")
+
+          ("pt" "Task"
+           entry
+           (file ,efs/org-inbox-file)
+           "* TODO [#B] %^{task} %^g\n  :LOGBOOK:\n  - CREATED: %U\n  :END:\n%?\n")
+
+          ("pn" "Note"
+           entry
+           (file ,efs/org-inbox-file)
+           "* %^{item} %^g\n  :LOGBOOK:\n  - CREATED: %U\n  :END:\n%?\n")
+
+          ("pm" "Meeting"
+           entry
+           (file ,efs/org-inbox-file)
+           "* MEET [#A] %^{meeting} %^g\n  SCHEDULED: %^T\n  :LOGBOOK:\n  - CREATED: %U\n  :END:\n%?\n")))
+
+  (efs/org-font-setup))
+
+(defun efs/org-mode-visual-fill ()
+  (setq visual-fill-column-width 100
+        visual-fill-column-center-text t)
+  (visual-fill-column-mode 1))
+
+(use-package visual-fill-column
+  :hook (org-mode . efs/org-mode-visual-fill))
+
+(use-package evil-org
+  :ensure t
+  :after org
+  :hook (org-mode . (lambda () evil-org-mode))
+  :config
+  (require 'evil-org-agenda)
+  (evil-org-agenda-set-keys))
+
+(with-eval-after-load 'org
+  (org-babel-do-load-languages
+   'org-babel-load-languages
+   '((emacs-lisp . t)
+     (python . t)))
+
+  (push '("conf-unix" . conf-unix) org-src-lang-modes))
+
+(with-eval-after-load 'org
+  ;; This is needed as of Org 9.2
+  (require 'org-tempo)
+
+  (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
+  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
+  (add-to-list 'org-structure-template-alist '("py" . "src python")))
+
+;; Automatically tangle our Emacs.org config file when we save it
+(defun efs/org-babel-tangle-config ()
+  (when (string-equal (file-name-directory (buffer-file-name))
+                      (expand-file-name user-emacs-directory))
+    ;; Dynamic scoping to the rescue
+    (let ((org-confirm-babel-evaluate nil))
+      (org-babel-tangle))))
+
+(add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'efs/org-babel-tangle-config)))
+
+(use-package org-modern
+  :ensure t
+  :config
+  (setopt org-modern-star 'replace)
+  (setopt org-modern-replace-stars "◉○●")
+  :hook
+  (org-mode . org-modern-mode)
+  (org-agenda-finalize . org-modern-agenda))
+
+(use-package org-appear
+  :commands (org-appear-mode)
+  :hook (org-mode . org-appear-mode)
+  :config
+  (setq org-hide-emphasis-markers t)
+  (setq org-appear-autoemphasis t
+	org-appear-autolinks    t
+	org-appear-autosubmarkers t))
+
+(use-package jinx
+  :hook (text-mode . jinx-mode)
+  :bind ([remap ispell-word] . jinx-correct)
+  :custom
+  (jinx-languages "en_GB"))
+
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
@@ -316,331 +713,6 @@
   :after evil
   :config
   (evil-commentary-mode))
-
-(use-package command-log-mode
-  :commands command-log-mode)
-
-(use-package doom-themes
-  :init (load-theme 'doom-gruvbox t))
-
-(use-package all-the-icons)
-
-(use-package doom-modeline
-  :init (doom-modeline-mode 1)
-  :custom ((doom-modeline-height 15)))
-
-(use-package which-key
-  :defer 0
-  :diminish which-key-mode
-  :config
-  (which-key-mode)
-  (setq which-key-idle-delay 1))
-
-;; Completion UI
-(use-package vertico
-  :ensure t
-  :bind (:map vertico-map
-	      ("C-j" . vertico-next)
-	      ("C-k" . vertico-previous)
-	      ("C-f" . vertico-exit)
-	      :map minibuffer-local-map
-	      ("M-h" . backward-kill-word))
-  :custom
-  (vertico-cycle t)
-  :init
-  (vertico-mode))
-
-(use-package savehist
-  :init
-  (savehist-mode))
-
-;; Rich annotations
-(use-package marginalia
-  :after vertico
-  :ensure t
-  :init
-  (marginalia-mode))
-
-;; Better matching
-(use-package orderless
-  :custom
-  (completion-styles '(orderless basic))
-  (completion-category-defaults nil)
-  (completion-category-overrides
-   '((file (styles partial-completion)))))
-
-;; Counsel replacement
-(use-package consult
-  :bind (("C-s" . consult-line)
-         ("C-M-j" . consult-buffer)
-         :map minibuffer-local-map
-         ("C-r" . consult-history)))
-
-;; Optional but highly recommended
-(use-package embark
-  :bind
-  (("C-." . embark-act)
-   ("C-;" . embark-dwim)
-   ("C-h B" . embark-bindings)))
-
-(use-package embark-consult
-  :after (embark consult))
-
-(use-package helpful
-  :commands (helpful-callable helpful-variable helpful-command helpful-key)
-  :bind
-  ([remap describe-function] . helpful-callable)
-  ([remap describe-command] . helpful-command)
-  ([remap describe-variable] . helpful-variable)
-  ([remap describe-key] . helpful-key))
-
-(use-package hydra
-  :defer t)
-
-(defhydra hydra-text-scale (:timeout 4)
-  "scale text"
-  ("j" text-scale-increase "in")
-  ("k" text-scale-decrease "out")
-  ("f" nil "finished" :exit t))
-
-(defun efs/org-font-setup ()
-  ;; Replace list hyphen with dot
-  (font-lock-add-keywords 'org-mode
-                          '(("^ *\\([-]\\) "
-                             (0 (prog1 () (compose-region (match-beginning 1) (match-end 1) "•"))))))
-
-  ;; Set faces for heading levels
-  (dolist (face '((org-level-1 . 1.2)
-                  (org-level-2 . 1.1)
-                  (org-level-3 . 1.05)
-                  (org-level-4 . 1.0)
-                  (org-level-5 . 1.1)
-                  (org-level-6 . 1.1)
-                  (org-level-7 . 1.1)
-                  (org-level-8 . 1.1)))
-    (set-face-attribute (car face) nil :font "Iosevka Aile" :weight 'regular :height (cdr face)))
-
-  ;; Ensure that anything that should be fixed-pitch in Org files appears that way
-  (set-face-attribute 'org-block nil    :foreground nil :inherit 'fixed-pitch)
-  (set-face-attribute 'org-table nil    :inherit 'fixed-pitch)
-  (set-face-attribute 'org-formula nil  :inherit 'fixed-pitch)
-  (set-face-attribute 'org-code nil     :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-table nil    :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-verbatim nil :inherit '(shadow fixed-pitch))
-  (set-face-attribute 'org-special-keyword nil :inherit '(font-lock-comment-face fixed-pitch))
-  (set-face-attribute 'org-meta-line nil :inherit '(font-lock-comment-face fixed-pitch))
-  (set-face-attribute 'org-checkbox nil  :inherit 'fixed-pitch)
-  (set-face-attribute 'line-number nil :inherit 'fixed-pitch)
-  (set-face-attribute 'line-number-current-line nil :inherit 'fixed-pitch))
-
-(defun efs/org-mode-setup ()
-  (org-indent-mode)
-  (variable-pitch-mode 1)
-  (visual-line-mode 1))
-
-(use-package org
-  :pin org
-  :commands (org-capture org-agenda)
-  :hook (org-mode . efs/org-mode-setup)
-  :config
-  (setq org-ellipsis " ")
-
-  (setq org-agenda-start-with-log-mode t)
-  (setq org-log-done 'time)
-  (setq org-log-into-drawer t)
-
-  (setq org-effort-property "EFFORT")
-  
-  (setq org-agenda-files
-        (append
-         '("~/Org/inbox.org"
-           "~/Org/perso.org"
-           "~/Org/habits.org")
-         (directory-files-recursively "~/Org/archives/" "\\.org$")
-         (directory-files-recursively "~/Org/projects/" "\\.org$")))
-
-  (require 'org-habit)
-  (add-to-list 'org-modules 'org-habit)
-  (setq org-habit-graph-column 60)
-
-  (setq org-todo-keywords
-        '((sequence "TODO(t@/!)" "CURR(c@/!)" "HOLD(h@/!)" "|" "DONE(d@/@)" "ABRT(a@/@)")
-          (sequence "MEET(m@/!)" "|" "DONE(d@/@)" "ABRT(a@/@)")))
-
-  ;; Save Org buffers after refiling!
-  (advice-add 'org-refile :after 'org-save-all-org-buffers)
-
-  (setq org-tag-alist
-        '(("@URGENT" . ?u) ;; Items that should be handled immediately
-          ("@REFILE" . ?r) ;; Items that should be moved or processed later
-          ("@CURR" . ?c))) ;; Items currently in progress
-
-  (setq efs/org-filetags '("@PERSO" "@PROJECT" "@WORK"))
-
-  (defun efs/agenda-skip-tags (&rest args)
-    "Skip tags passed as 'args' in the agenda view"
-    (let (beg end)
-      (org-back-to-heading t)
-      (setq beg (point)
-            end (progn (outline-next-heading) (1- (point))))
-      (goto-char beg)
-      (setq alltags (prin1-to-string (org-get-tags)))
-      (goto-char beg)
-      (if (-some (lambda (x) (string-match x alltags)) args)
-          end)))
-
-  (defun efs/agenda-skip-property (proprety value)
-    "Skip an agenda entry if it has a 'property' equal to 'value'."
-    (let ((subtree-end (save-excursion (org-end-of-subtree t))))
-      (if (string= (org-entry-get nil proprety) value)
-          subtree-end
-    	nil)))
-
-  ;; This simple sorting strategy works for my purposes
-  (setopt org-agenda-sorting-strategy
-          '((agenda time-up deadline-up scheduled-up todo-state-up priority-down)
-            (todo todo-state-up priority-down deadline-up)
-            (tags todo-state-up priority-down deadline-up)
-            (search todo-state-up priority-down deadline-up)))
-
-  ;; I find it slightly neater this way
-  (setq org-agenda-prefix-format "%-10:c %-12t %-6e %s")
-
-  ;; Do not display filetags like =@PERSO= or =@PROJECT= in the agenda views
-  (setq org-agenda-hide-tags-regexp
-  	(mapconcat (lambda (x) x) efs/org-filetags "\\|"))
-
-  ;; Configure custom agenda views
-  (setq efs/org-perso-agenda-views
-        '(("p" "Perso agenda"
-           (
-            ;; 1) Agenda over the next 14 days
-            (agenda ""
-                    ((org-agenda-show-all-dates nil)
-                     (org-agenda-use-time-grid nil)
-                     (org-agenda-span 14)
-                     (org-agenda-start-on-weekday nil)
-                     (org-deadline-warning-days 14)
-                     (org-agenda-show-log t)
-                     (org-agenda-skip-function
-                      '(efs/agenda-skip-tags "@WORK"))))
-
-            ;; 2) Inbox
-            (tags "@PERSO+@REFILE|@PERSO+@URGENT"
-                  ((org-agenda-overriding-header "Inbox || Urgent:")))
-
-            ;; 3) In Progress
-            (tags-todo "@PERSO+@CURR|@PERSO+TODO={CURR}|@PERSO+TODO={HOLD}"
-                       ((org-agenda-overriding-header "In Progress:")
-      			(org-agenda-skip-function '(or ;; (org-agenda-skip-entry-if 'scheduled)
-                                                    ;; (org-agenda-skip-entry-if 'deadline)
-                                                    (efs/agenda-skip-property "STYLE" "habit")
-                                                    (efs/agenda-skip-tags "monthlygoals")))))
-
-            ;; 4) Remaining Monthly Goals
-            (tags "@PERSO+monthlygoals-TODO={DONE}"
-                  ((org-agenda-overriding-header "Monthly Goals:")))
-
-            ;; 5) Next
-            (tags-todo "@PERSO+TODO={TODO}-@REFILE"
-                       ((org-agenda-overriding-header "Next:")
-      			(org-agenda-skip-function '(or (org-agenda-skip-entry-if 'scheduled)
-                                                       (org-agenda-skip-entry-if 'deadline)
-                                                       (efs/agenda-skip-property "STYLE" "habit")
-                                                       (efs/agenda-skip-tags "monthlygoals")))))
-
-            ;; 6) Completed
-            (todo "DONE|ABRT"
-                  ((org-agenda-overriding-header "Completed:")
-                   (org-agenda-skip-function '(efs/agenda-skip-tags "@WORK" "monthlygoals"))))))))
-
-  (setq org-agenda-custom-commands
-      	(append org-agenda-custom-commands efs/org-perso-agenda-views))
-
-  (setq org-refile-targets
-	`(("~/Org/inbox.org" :maxlevel . 5)
-          ("~/Org/perso.org" :maxlevel . 5)
-          (,(directory-files-recursively "~/Org/projects/" "\\.org$")
-           :maxlevel . 5)))
-
-  (setq org-capture-templates
-        `(("p" "Perso Capture")
-          ("pt" "Task" entry (file "~/Org/inbox.org")
-           "* TODO [#B] %^{task} %^g\n  :LOGBOOK:\n  - CREATED: %U\n  :END:\n%?\n")
-
-          ("pn" "Note" entry (file "~/Org/inbox.org")
-           "* %^{item} %^g\n  :LOGBOOK:\n  - CREATED: %U\n  :END:\n%?\n")
-
-          ("pm" "Meeting" entry (file "~/Org/inbox.org")
-           "* MEET [#A] %^{meeting} %^g\n  SCHEDULED: %^T\n  :LOGBOOK:\n  - CREATED: %U\n  :END:\n%?\n")))
-
-  (efs/org-font-setup))
-
-(defun efs/org-mode-visual-fill ()
-  (setq visual-fill-column-width 100
-        visual-fill-column-center-text t)
-  (visual-fill-column-mode 1))
-
-(use-package visual-fill-column
-  :hook (org-mode . efs/org-mode-visual-fill))
-
-(use-package evil-org
-  :ensure t
-  :after org
-  :hook (org-mode . (lambda () evil-org-mode))
-  :config
-  (require 'evil-org-agenda)
-  (evil-org-agenda-set-keys))
-
-(with-eval-after-load 'org
-  (org-babel-do-load-languages
-   'org-babel-load-languages
-   '((emacs-lisp . t)
-     (python . t)))
-
-  (push '("conf-unix" . conf-unix) org-src-lang-modes))
-
-(with-eval-after-load 'org
-  ;; This is needed as of Org 9.2
-  (require 'org-tempo)
-
-  (add-to-list 'org-structure-template-alist '("sh" . "src shell"))
-  (add-to-list 'org-structure-template-alist '("el" . "src emacs-lisp"))
-  (add-to-list 'org-structure-template-alist '("py" . "src python")))
-
-;; Automatically tangle our Emacs.org config file when we save it
-(defun efs/org-babel-tangle-config ()
-  (when (string-equal (file-name-directory (buffer-file-name))
-                      (expand-file-name user-emacs-directory))
-    ;; Dynamic scoping to the rescue
-    (let ((org-confirm-babel-evaluate nil))
-      (org-babel-tangle))))
-
-(add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'efs/org-babel-tangle-config)))
-
-(use-package org-modern
-  :ensure t
-  :config
-  (setopt org-modern-star 'replace)
-  (setopt org-modern-replace-stars "◉○●")
-  :hook
-  (org-mode . org-modern-mode)
-  (org-agenda-finalize . org-modern-agenda))
-
-(use-package org-appear
-  :commands (org-appear-mode)
-  :hook (org-mode . org-appear-mode)
-  :config
-  (setq org-hide-emphasis-markers t)
-  (setq org-appear-autoemphasis t
-	org-appear-autolinks    t
-	org-appear-autosubmarkers t))
-
-(use-package jinx
-  :hook (text-mode . jinx-mode)
-  :bind ([remap ispell-word] . jinx-correct)
-  :custom
-  (jinx-languages "en_GB"))
 
 (defun efs/lsp-mode-setup ()
   (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
