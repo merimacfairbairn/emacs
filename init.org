@@ -419,11 +419,30 @@ Set up paths to org-files so that i can easily rename them later
 
 #+end_src
 
+Open files if exist function
+
+#+begin_src emacs-lisp
+
+  (defun efs/open-org-file (file)
+  "Open FILE if it exists, otherwise create it and open it."
+  (interactive "fOrg file: ")
+  (unless (file-exists-p file)
+    (make-directory (file-name-directory file) t)
+    (write-region "" nil file))
+  (find-file file))
+
+#+end_src
+
 ** Basic Config
 
 This section contains the basic configuration for =org-mode= plus the configuration for Org agendas and capture templates.  There's a lot to unpack in here so I'd recommend watching the videos for [[https://youtu.be/VcgjTEa0kU4][Part 5]] and [[https://youtu.be/PNE-mgkZ6HM][Part 6]] for a full explanation.
 
 #+begin_src emacs-lisp
+
+  (defun efs/org-mode-setup ()
+    (org-indent-mode)
+    (variable-pitch-mode 1)
+    (visual-line-mode 1))
 
   (use-package org
     :pin org
@@ -901,8 +920,11 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
       ;; FILES
       "." '(find-file :which-key "find file")
       "f" '(:ignore t :which-key "files")
+      "fp" '(:ignore t :wk "perso agenda")
+      "fpp" '(lambda () (interactive) (efs/open-org-file efs/org-perso-file))
+      "fpi" '(lambda () (interactive) (efs/open-org-file efs/org-inbox-file))
+      "fpl" '(lambda () (interactive) (efs/open-org-file efs/org-logbook-archive-file) "logbook.org")
       "fde" '(lambda () (interactive) (find-file (expand-file-name "~/.config/emacs/init.org")))))
-
 
   (use-package evil
     :init

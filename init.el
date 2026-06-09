@@ -278,6 +278,19 @@
    efs/org-archives-directory
    "\\.org$"))
 
+(defun efs/open-org-file (file)
+"Open FILE if it exists, otherwise create it and open it."
+(interactive "fOrg file: ")
+(unless (file-exists-p file)
+  (make-directory (file-name-directory file) t)
+  (write-region "" nil file))
+(find-file file))
+
+(defun efs/org-mode-setup ()
+  (org-indent-mode)
+  (variable-pitch-mode 1)
+  (visual-line-mode 1))
+
 (use-package org
   :pin org
   :commands (org-capture org-agenda)
@@ -680,8 +693,11 @@
     ;; FILES
     "." '(find-file :which-key "find file")
     "f" '(:ignore t :which-key "files")
+    "fp" '(:ignore t :wk "perso agenda")
+    "fpp" '(lambda () (interactive) (efs/open-org-file efs/org-perso-file))
+    "fpi" '(lambda () (interactive) (efs/open-org-file efs/org-inbox-file))
+    "fpl" '(lambda () (interactive) (efs/open-org-file efs/org-logbook-archive-file) "logbook.org")
     "fde" '(lambda () (interactive) (find-file (expand-file-name "~/.config/emacs/init.org")))))
-
 
 (use-package evil
   :init
