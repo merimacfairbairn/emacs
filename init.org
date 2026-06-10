@@ -438,6 +438,14 @@ Open files if exist function
 This section contains the basic configuration for =org-mode= plus the configuration for Org agendas and capture templates.  There's a lot to unpack in here so I'd recommend watching the videos for [[https://youtu.be/VcgjTEa0kU4][Part 5]] and [[https://youtu.be/PNE-mgkZ6HM][Part 6]] for a full explanation.
 
 #+begin_src emacs-lisp
+  (defun org-journal-find-location ()
+    ;; Open today's journal, but specify a non-nil prefix argument in order to
+    ;; inhibit inserting the heading; org-capture will insert the heading.
+    (org-journal-new-entry t)
+    (unless (eq org-journal-file-type 'daily)
+      (org-narrow-to-subtree))
+    (goto-char (point-max)))
+
 
   (defun efs/org-mode-setup ()
     (org-indent-mode)
@@ -610,7 +618,13 @@ This section contains the basic configuration for =org-mode= plus the configurat
             ("pm" "Meeting"
              entry
              (file ,efs/org-inbox-file)
-             "* MEET [#A] %^{meeting} %^g\n  SCHEDULED: %^T\n  :LOGBOOK:\n  - CREATED: %U\n  :END:\n%?\n")))
+             "* MEET [#A] %^{meeting} %^g\n  SCHEDULED: %^T\n  :LOGBOOK:\n  - CREATED: %U\n  :END:\n%?\n")
+
+  	  ("pj" "Journal"
+  	   plain
+  	   (function org-journal-find-location)
+  	   "** %(format-time-string org-journal-time-format)%^{Title}\n%i%?"
+  	   :jump-to-captured t :immediate-finish t)))
 
     (efs/org-font-setup))
 
@@ -630,6 +644,24 @@ We use [[https://github.com/joostkremers/visual-fill-column][visual-fill-column]
   (use-package visual-fill-column
     :hook (org-mode . efs/org-mode-visual-fill))
 
+#+end_src
+
+** Org-Journal
+
+[[https://github.com/bastibe/org-journal][Org-Journal]] is the package for creating and managing your own digital diary within the comfort of Emacs.
+
+#+begin_src emacs-lisp
+
+  (use-package org-journal
+    :ensure t
+    :defer t
+    :init
+    ;; Change default prefix key (C-c j); needs to be set before loading org-journal
+    (setq org-journal-prefix-key "C-c j")
+    :config
+    (setq org-journal-dir (expand-file-name "diary/" efs/org-directory))
+    (setq org-journal-file-format "%Y-%m-%d.org"))
+    
 #+end_src
 
 ** Evil Org Bindings

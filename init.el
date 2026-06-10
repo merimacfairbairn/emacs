@@ -286,6 +286,15 @@
   (write-region "" nil file))
 (find-file file))
 
+(defun org-journal-find-location ()
+  ;; Open today's journal, but specify a non-nil prefix argument in order to
+  ;; inhibit inserting the heading; org-capture will insert the heading.
+  (org-journal-new-entry t)
+  (unless (eq org-journal-file-type 'daily)
+    (org-narrow-to-subtree))
+  (goto-char (point-max)))
+
+
 (defun efs/org-mode-setup ()
   (org-indent-mode)
   (variable-pitch-mode 1)
@@ -457,7 +466,13 @@
           ("pm" "Meeting"
            entry
            (file ,efs/org-inbox-file)
-           "* MEET [#A] %^{meeting} %^g\n  SCHEDULED: %^T\n  :LOGBOOK:\n  - CREATED: %U\n  :END:\n%?\n")))
+           "* MEET [#A] %^{meeting} %^g\n  SCHEDULED: %^T\n  :LOGBOOK:\n  - CREATED: %U\n  :END:\n%?\n")
+
+	  ("pj" "Journal"
+	   plain
+	   (function org-journal-find-location)
+	   "** %(format-time-string org-journal-time-format)%^{Title}\n%i%?"
+	   :jump-to-captured t :immediate-finish t)))
 
   (efs/org-font-setup))
 
@@ -468,6 +483,16 @@
 
 (use-package visual-fill-column
   :hook (org-mode . efs/org-mode-visual-fill))
+
+(use-package org-journal
+  :ensure t
+  :defer t
+  :init
+  ;; Change default prefix key (C-c j); needs to be set before loading org-journal
+  (setq org-journal-prefix-key "C-c j")
+  :config
+  (setq org-journal-dir (expand-file-name "diary/" efs/org-directory))
+  (setq org-journal-file-format "%Y-%m-%d.org"))
 
 (use-package evil-org
   :ensure t
