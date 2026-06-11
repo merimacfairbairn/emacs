@@ -311,6 +311,9 @@
   (setq org-log-done 'time)
   (setq org-log-into-drawer t)
 
+  (setq org-special-ctrl-a/e t)
+  (setq org-M-RET-may-split-line nil)
+
   (setq org-effort-property "EFFORT")
 
   (setq org-agenda-files
@@ -497,10 +500,16 @@
 (use-package evil-org
   :ensure t
   :after org
-  :hook (org-mode . (lambda () evil-org-mode))
+  :hook (org-mode . evil-org-mode)
   :config
-  (require 'evil-org-agenda)
-  (evil-org-agenda-set-keys))
+  (evil-org-set-key-theme
+   '(navigation
+     insert
+     textobjects
+     additional
+     shift
+     todo
+     heading)))
 
 (with-eval-after-load 'org
   (org-babel-do-load-languages

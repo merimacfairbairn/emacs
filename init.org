@@ -463,6 +463,9 @@ This section contains the basic configuration for =org-mode= plus the configurat
     (setq org-log-done 'time)
     (setq org-log-into-drawer t)
 
+    (setq org-special-ctrl-a/e t)
+    (setq org-M-RET-may-split-line nil)
+
     (setq org-effort-property "EFFORT")
 
     (setq org-agenda-files
@@ -671,10 +674,16 @@ We use [[https://github.com/joostkremers/visual-fill-column][visual-fill-column]
   (use-package evil-org
     :ensure t
     :after org
-    :hook (org-mode . (lambda () evil-org-mode))
+    :hook (org-mode . evil-org-mode)
     :config
-    (require 'evil-org-agenda)
-    (evil-org-agenda-set-keys))
+    (evil-org-set-key-theme
+     '(navigation
+       insert
+       textobjects
+       additional
+       shift
+       todo
+       heading)))
 
 #+end_src
 
