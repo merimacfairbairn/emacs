@@ -323,6 +323,8 @@
                efs/org-habits-file)
          (efs/org-archive-files)
          (efs/org-project-files)))
+  
+  (setq org-agenda-window-setup 'only-window)
 
   (require 'org-habit)
   (add-to-list 'org-modules 'org-habit)
