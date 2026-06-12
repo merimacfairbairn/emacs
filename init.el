@@ -663,6 +663,10 @@
     "hm" '(describe-mode :which-key "describe mode")
     "hb" '(describe-bindings :which-key "describe bindings")
     "hv" '(describe-variable :which-key "describe variable")
+    "hk" '(describe-key :which-key "describe key")
+    "hx" '(describe-command :which-key "describe command")
+    "ho" '(describe-symbol :which-key "describe symbol")
+    "hs" '(describe-syntax :which-key "describe syntax")
     "hrr" '((lambda () (interactive) (load-file user-init-file)) :which-key "reload config")
 
     ;; PROJECTILE
