@@ -331,12 +331,12 @@
   (setq org-habit-graph-column 60)
 
   (setq org-todo-keywords
-        '((sequence "TODO(t@/!)" "CURR(c@/!)" "HOLD(h@/!)"
+        '((sequence "TODO(t)" "CURR(c!)" "HOLD(h@)"
                     "|"
-                    "DONE(d@/@)" "ABRT(a@/@)")
-          (sequence "MEET(m@/!)"
+                    "DONE(d)" "ABRT(a@)")
+          (sequence "MEET(m)"
                     "|"
-                    "DONE(d@/@)" "ABRT(a@/@)")))
+                    "DONE(d)" "ABRT(a@)")))
 
   ;; Save Org buffers after refiling
   (advice-add 'org-refile :after #'org-save-all-org-buffers)
