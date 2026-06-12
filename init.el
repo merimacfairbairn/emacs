@@ -510,8 +510,7 @@
      textobjects
      additional
      shift
-     todo
-     heading)))
+     todo)))
 
 (with-eval-after-load 'org
   (org-babel-do-load-languages
