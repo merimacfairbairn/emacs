@@ -567,6 +567,17 @@
   :custom
   (jinx-languages "en_GB"))
 
+(use-package org-download
+  :after org
+  :config
+  (setq org-download-method 'directory
+        org-download-image-dir (concat (file-name-sans-extension
+                                      (file-name-nondirectory (buffer-file-name)))
+                                               "-img")
+        org-download-heading-lvl nil
+        org-image-actual-width 600)
+  (add-hook 'dired-mode-hook #'org-download-enable))
+
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
@@ -623,6 +634,7 @@
     "ll" '(org-cliplink :wk "cliplink")
     "li" '(org-insert-link :wk "insert")
     "ls" '(org-store-link :wk "store")
+    "lm" '(org-download-clipboard :wk "insert media")
     "lo" '(org-open-at-point :wk "open")
     "ln" '(org-next-link :wk "next")
     "lp" '(org-previous-link :wk "previous")
