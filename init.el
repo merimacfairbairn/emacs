@@ -558,6 +558,9 @@
 	org-appear-autolinks    t
 	org-appear-autosubmarkers t))
 
+(use-package org-cliplink
+  :after org)
+
 (use-package jinx
   :hook (text-mode . jinx-mode)
   :bind ([remap ispell-word] . jinx-correct)
@@ -617,9 +620,12 @@
 
     ;; Links
     "l"  '(:ignore t :wk "links")
+    "ll" '(org-cliplink :wk "cliplink")
     "li" '(org-insert-link :wk "insert")
     "ls" '(org-store-link :wk "store")
     "lo" '(org-open-at-point :wk "open")
+    "ln" '(org-next-link :wk "next")
+    "lp" '(org-previous-link :wk "previous")
 
     ;; Tables
     "b"  '(:ignore t :wk "table")

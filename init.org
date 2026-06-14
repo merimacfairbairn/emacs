@@ -774,6 +774,17 @@ Better-looking org files
 
 #+end_src
 
+** Org-cliplink
+
+[[https://github.com/rexim/org-cliplink][Org-cliplink]] is a package that inserts pretty online links in org.
+
+#+begin_src emacs-lisp
+
+  (use-package org-cliplink
+    :after org)
+  
+#+end_src
+
 ** Spellchecker
 
 [[https:https://github.com/minad/jinx][Jinx]] seems to be the way to go for spellchecking in Emacs nowadays.
@@ -851,9 +862,12 @@ This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil
 
       ;; Links
       "l"  '(:ignore t :wk "links")
+      "ll" '(org-cliplink :wk "cliplink")
       "li" '(org-insert-link :wk "insert")
       "ls" '(org-store-link :wk "store")
       "lo" '(org-open-at-point :wk "open")
+      "ln" '(org-next-link :wk "next")
+      "lp" '(org-previous-link :wk "previous")
 
       ;; Tables
       "b"  '(:ignore t :wk "table")
