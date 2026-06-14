@@ -311,6 +311,8 @@
   (setq org-log-done 'time)
   (setq org-log-into-drawer t)
 
+  (setq org-clock-in-switch-to-state "CURR")
+
   (setq org-special-ctrl-a/e t)
   (setq org-M-RET-may-split-line nil)
 
