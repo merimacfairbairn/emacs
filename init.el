@@ -85,6 +85,10 @@
 (setq use-file-dialog-box nil)
 (setq use-short-answers t)  ;y/n
 
+;; Open windows on the right by default
+(setq split-height-threshold nil)
+(setq split-width-threshold 0)
+
 ;; Disable line numbers for some modes
 (dolist (mode '(org-mode-hook
                 term-mode-hook
