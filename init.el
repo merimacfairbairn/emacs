@@ -578,6 +578,11 @@
         org-image-actual-width 600)
   (add-hook 'dired-mode-hook #'org-download-enable))
 
+(use-package org-roam
+  :defer t
+  :config
+  (setq org-roam-directory (expand-file-name "roam/" efs/org-directory)))
+
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
@@ -711,6 +716,16 @@
     ;; CAPTURES
     "c" '(:ignore t :wk "captures")
     "cc" '(org-capture :wk "menu")
+
+    ;; ORG ROAM
+    "n" '(:ignore t :wk "roam")
+    "nf" '(org-roam-node-find :wk "find node")
+    "ni" '(org-roam-node-insert :wk "insert node")
+    "nc" '(org-roam-capture :wk "capture node")
+    "nb" '(org-roam-buffer-toggle :wk "toggle buffer")
+    "nR" '(org-roam-node-random :wk "random node")
+    "nr" '(org-roam-refile :wk "refile")
+    "nd" '(:ignore t :wk "dailies")
 
     ;; WINDOWS
     "w" '(:ignore t :wk "windows")
