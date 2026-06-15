@@ -709,7 +709,7 @@
     ;; BUFFERS
     "b" '(:ignore t :which-key "bufs")
     "bb" '(consult-buffer  :which-key "switch")
-    "bk" '(kill-this-buffer :which-key "kill")
+    "bk" '(kill-current-buffer :which-key "kill")
     "be" '(erase-buffer :which-key "erase")
     "bs" '(scratch-buffer :which-key "scratch")
 
