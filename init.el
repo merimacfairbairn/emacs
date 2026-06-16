@@ -685,6 +685,7 @@
     "SPC" '(execute-extended-command :which-key "M-x")
     "/" '(consult-ripgrep :which-key "Search Project")
     "!" '(shell-command :which-key "shell")
+    "u" '(universal-argument :wk "Universal Argument")
     
     ;; HELP
     "h" '(:ignore t :which-key "help")
