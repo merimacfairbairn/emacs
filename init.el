@@ -496,8 +496,7 @@
   :hook (org-mode . efs/org-mode-visual-fill))
 
 (use-package org-journal
-  :ensure t
-  :defer t
+  :commands (org-journal-new-entry)
   :init
   ;; Change default prefix key (C-c j); needs to be set before loading org-journal
   (setq org-journal-prefix-key "C-c j")
