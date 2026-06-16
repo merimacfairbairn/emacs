@@ -784,7 +784,7 @@ Better-looking org files
 #+begin_src emacs-lisp
 
   (use-package org-cliplink
-    :after org)
+    :commands (org-cliplink))
   
 #+end_src
 

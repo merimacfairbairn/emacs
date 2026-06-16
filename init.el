@@ -562,7 +562,7 @@
 	org-appear-autosubmarkers t))
 
 (use-package org-cliplink
-  :after org)
+  :commands (org-cliplink))
 
 (use-package jinx
   :hook (text-mode . jinx-mode)
