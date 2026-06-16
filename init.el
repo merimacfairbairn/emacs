@@ -583,7 +583,7 @@
   (add-hook 'dired-mode-hook #'org-download-enable))
 
 (use-package org-roam
-  :defer t
+  :commands (org-roam-node-find org-roam-node-insert)
   :config
   (setq org-roam-directory (expand-file-name "roam/" efs/org-directory)))
 

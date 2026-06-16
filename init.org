@@ -832,7 +832,7 @@ Dependencies:
 #+begin_src emacs-lisp
 
   (use-package org-roam
-    :defer t
+    :commands (org-roam-node-find org-roam-node-insert)
     :config
     (setq org-roam-directory (expand-file-name "roam/" efs/org-directory)))
 
