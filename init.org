@@ -813,7 +813,7 @@ Dependencies:
 #+begin_src emacs-lisp
 
   (use-package org-download
-    :after org
+    :commands (org-download-clipboard)
     :config
     (setq org-download-method 'directory
           org-download-image-dir (concat (file-name-sans-extension

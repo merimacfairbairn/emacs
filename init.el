@@ -571,7 +571,7 @@
   (jinx-languages "en_GB"))
 
 (use-package org-download
-  :after org
+  :commands (org-download-clipboard)
   :config
   (setq org-download-method 'directory
         org-download-image-dir (concat (file-name-sans-extension
