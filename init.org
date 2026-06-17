@@ -59,6 +59,7 @@ Emacs has a built in package manager but it doesn't make it easy to automaticall
 
   (require 'use-package)
   (setq use-package-always-ensure t)
+  (setq use-package-always-defer t)
 
 #+end_src
 
