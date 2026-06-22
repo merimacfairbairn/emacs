@@ -430,14 +430,14 @@
     :keymaps 'org-mode-map
     ;; Checkboxes
     "SPC" '(org-toggle-checkbox :wk "toggle checkbox")
+    ;; Edit source
+    "'" '(org-edit-src-code :wk "edit source")
     ;; TODOs
     "t"  '(org-todo :wk "todo")
     ;; Dates
     "d"  '(org-deadline :wk "deadline")
     "s"  '(org-schedule :wk "schedule")
     "T"  '(org-time-stamp :wk "timestamp")
-    ;; Edit source
-    "'" '(org-edit-src-code :wk "edit source")
     ;; Headings
     "h"  '(:ignore t :wk "heading")
     "hh" '(org-insert-heading :wk "insert")
@@ -498,6 +498,21 @@
    "M-k" #'org-agenda-priority-up
    "M-l" #'org-agenda-todo-nextset
    "M-h" #'org-agenda-todo-previousset)
+
+  (general-define-key
+   :definer 'minor-mode
+   :states 'normal
+   :keymaps 'org-capture-mode
+   "M-f" 'org-capture-finalize
+   "M-r" 'org-capture-refile
+   "M-k" 'org-capture-kill)
+
+  (general-define-key
+   :definer 'minor-mode
+   :states 'normal
+   :keymaps 'org-src-mode
+   "M-f" 'org-edit-src-exit
+   "M-k" 'org-edit-src-abort)
 
   :config
   (setq org-ellipsis " ")

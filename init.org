@@ -563,279 +563,295 @@ Open files if exist function
 This section contains the basic configuration for =org-mode= plus the configuration for Org agendas and capture templates.  There's a lot to unpack in here so I'd recommend watching the videos for [[https://youtu.be/VcgjTEa0kU4][Part 5]] and [[https://youtu.be/PNE-mgkZ6HM][Part 6]] for a full explanation.
 
 #+begin_src emacs-lisp
-      (defun org-journal-find-location ()
-        ;; Open today's journal, but specify a non-nil prefix argument in order to
-        ;; inhibit inserting the heading; org-capture will insert the heading.
-        (org-journal-new-entry t)
-        (unless (eq org-journal-file-type 'daily)
-          (org-narrow-to-subtree))
-        (goto-char (point-max)))
 
-      (defun efs/org-mode-setup ()
-        (org-indent-mode)
-        (variable-pitch-mode 1)
-        (visual-line-mode 1))
+  (defun org-journal-find-location ()
+    ;; Open today's journal, but specify a non-nil prefix argument in order to
+    ;; inhibit inserting the heading; org-capture will insert the heading.
+    (org-journal-new-entry t)
+    (unless (eq org-journal-file-type 'daily)
+      (org-narrow-to-subtree))
+    (goto-char (point-max)))
 
-      (use-package org
-        :pin org
-        :hook (org-mode . efs/org-mode-setup)
-        :general
-        (efs/leader-keys
-          "a"  'org-agenda :wk "agenda"
-          "c" 'org-capture :wk "capture")
-        
-        :general-config
-        (efs/local-leader-keys
-          :keymaps 'org-mode-map
-          ;; Checkboxes
-          "SPC" '(org-toggle-checkbox :wk "toggle checkbox")
-          ;; TODOs
-          "t"  '(org-todo :wk "todo")
-          ;; Dates
-          "d"  '(org-deadline :wk "deadline")
-          "s"  '(org-schedule :wk "schedule")
-          "T"  '(org-time-stamp :wk "timestamp")
-          ;; Edit source
-          "'" '(org-edit-src-code :wk "edit source")
-          ;; Headings
-          "h"  '(:ignore t :wk "heading")
-          "hh" '(org-insert-heading :wk "insert")
-          "ht" '(org-insert-todo-heading :wk "todo heading")
-          "hu" '(org-up-element :wk "up")
-          "hn" '(org-next-visible-heading :wk "next")
-          "hp" '(org-previous-visible-heading :wk "prev")
-          ;; Subtree
-          "x"  '(:ignore t :wk "subtree")
-          "xa" '(org-archive-subtree :wk "archive")
-          "xr" '(org-refile :wk "refile")
-          "xk" '(org-cut-subtree :wk "cut")
-          "xy" '(org-copy-subtree :wk "copy")
-          ;; Priority
-          "p"  '(:ignore t :wk "priority")
-          "pp" '(org-priority :wk "set")
-          ;; Links
-          "l"  '(:ignore t :wk "links")
-          "ll" '(org-cliplink :wk "cliplink")
-          "li" '(org-insert-link :wk "insert")
-          "ls" '(org-store-link :wk "store")
-          "lm" '(org-download-clipboard :wk "insert media")
-          "lo" '(org-open-at-point :wk "open")
-          "ln" '(org-next-link :wk "next")
-          "lp" '(org-previous-link :wk "prev")
-          ;; Tables
-          "b"  '(:ignore t :wk "table")
-          "ba" '(org-table-align :wk "align")
-          "br" '(org-table-recalculate :wk "recalc")
-          ;; Clocking
-          "c"  '(:ignore t :wk "clock")
-          "ci" '(org-clock-in :wk "in")
-          "co" '(org-clock-out :wk "out")
-          "cr" '(org-clock-report :wk "report")
-          ;; Navigation
-          "g"  '(:ignore t :wk "goto")
-          "gc" '(org-goto :wk "goto")
-          "gi" '(org-id-get-create :wk "create id")
-          ;; Visibility
-          "v"  '(:ignore t :wk "visibility")
-          "vc" '(org-cycle :wk "cycle")
-          "va" '(org-cycle-global :wk "global cycle")
-          ;; Export
-          "e"  '(:ignore t :wk "export")
-          "eh" '(org-html-export-to-html :wk "html")
-          "ep" '(org-latex-export-to-pdf :wk "pdf")
-          ;; Babel
-          "r"  '(:ignore t :wk "run")
-          "rb" '(org-babel-execute-src-block :wk "block")
-          "ra" '(org-babel-execute-buffer :wk "buffer"))
+  (defun efs/org-mode-setup ()
+    (org-indent-mode)
+    (variable-pitch-mode 1)
+    (visual-line-mode 1))
 
-        (general-define-key
-         :states 'normal
-         :keymaps 'org-agenda-mode-map
-         "e" #'org-agenda-set-effort
-         "c" #'org-agenda-capture
-         "M-j" #'org-agenda-priority-down
-         "M-k" #'org-agenda-priority-up
-         "M-l" #'org-agenda-todo-nextset
-         "M-h" #'org-agenda-todo-previousset)
+  (use-package org
+    :pin org
+    :hook (org-mode . efs/org-mode-setup)
+    :general
+    (efs/leader-keys
+      "a"  'org-agenda :wk "agenda"
+      "c" 'org-capture :wk "capture")
+    
+    :general-config
+    (efs/local-leader-keys
+      :keymaps 'org-mode-map
+      ;; Checkboxes
+      "SPC" '(org-toggle-checkbox :wk "toggle checkbox")
+      ;; Edit source
+      "'" '(org-edit-src-code :wk "edit source")
+      ;; TODOs
+      "t"  '(org-todo :wk "todo")
+      ;; Dates
+      "d"  '(org-deadline :wk "deadline")
+      "s"  '(org-schedule :wk "schedule")
+      "T"  '(org-time-stamp :wk "timestamp")
+      ;; Headings
+      "h"  '(:ignore t :wk "heading")
+      "hh" '(org-insert-heading :wk "insert")
+      "ht" '(org-insert-todo-heading :wk "todo heading")
+      "hu" '(org-up-element :wk "up")
+      "hn" '(org-next-visible-heading :wk "next")
+      "hp" '(org-previous-visible-heading :wk "prev")
+      ;; Subtree
+      "x"  '(:ignore t :wk "subtree")
+      "xa" '(org-archive-subtree :wk "archive")
+      "xr" '(org-refile :wk "refile")
+      "xk" '(org-cut-subtree :wk "cut")
+      "xy" '(org-copy-subtree :wk "copy")
+      ;; Priority
+      "p"  '(:ignore t :wk "priority")
+      "pp" '(org-priority :wk "set")
+      ;; Links
+      "l"  '(:ignore t :wk "links")
+      "ll" '(org-cliplink :wk "cliplink")
+      "li" '(org-insert-link :wk "insert")
+      "ls" '(org-store-link :wk "store")
+      "lm" '(org-download-clipboard :wk "insert media")
+      "lo" '(org-open-at-point :wk "open")
+      "ln" '(org-next-link :wk "next")
+      "lp" '(org-previous-link :wk "prev")
+      ;; Tables
+      "b"  '(:ignore t :wk "table")
+      "ba" '(org-table-align :wk "align")
+      "br" '(org-table-recalculate :wk "recalc")
+      ;; Clocking
+      "c"  '(:ignore t :wk "clock")
+      "ci" '(org-clock-in :wk "in")
+      "co" '(org-clock-out :wk "out")
+      "cr" '(org-clock-report :wk "report")
+      ;; Navigation
+      "g"  '(:ignore t :wk "goto")
+      "gc" '(org-goto :wk "goto")
+      "gi" '(org-id-get-create :wk "create id")
+      ;; Visibility
+      "v"  '(:ignore t :wk "visibility")
+      "vc" '(org-cycle :wk "cycle")
+      "va" '(org-cycle-global :wk "global cycle")
+      ;; Export
+      "e"  '(:ignore t :wk "export")
+      "eh" '(org-html-export-to-html :wk "html")
+      "ep" '(org-latex-export-to-pdf :wk "pdf")
+      ;; Babel
+      "r"  '(:ignore t :wk "run")
+      "rb" '(org-babel-execute-src-block :wk "block")
+      "ra" '(org-babel-execute-buffer :wk "buffer"))
 
-        :config
-        (setq org-ellipsis " ")
+    (general-define-key
+     :states 'normal
+     :keymaps 'org-agenda-mode-map
+     "e" #'org-agenda-set-effort
+     "c" #'org-agenda-capture
+     "M-j" #'org-agenda-priority-down
+     "M-k" #'org-agenda-priority-up
+     "M-l" #'org-agenda-todo-nextset
+     "M-h" #'org-agenda-todo-previousset)
 
-        (setq org-agenda-start-with-log-mode t)
-        (setq org-log-done 'time)
-        (setq org-log-into-drawer t)
+    (general-define-key
+     :definer 'minor-mode
+     :states 'normal
+     :keymaps 'org-capture-mode
+     "M-f" 'org-capture-finalize
+     "M-r" 'org-capture-refile
+     "M-k" 'org-capture-kill)
 
-        (setq org-clock-in-switch-to-state "CURR")
+    (general-define-key
+     :definer 'minor-mode
+     :states 'normal
+     :keymaps 'org-src-mode
+     "M-f" 'org-edit-src-exit
+     "M-k" 'org-edit-src-abort)
 
-        (setq org-special-ctrl-a/e t)
-        (setq org-M-RET-may-split-line nil)
+    :config
+    (setq org-ellipsis " ")
 
-        (setq org-effort-property "EFFORT")
+    (setq org-agenda-start-with-log-mode t)
+    (setq org-log-done 'time)
+    (setq org-log-into-drawer t)
 
-        (setq org-agenda-files
-              (append
-               (list efs/org-inbox-file
-                     efs/org-perso-file
-                     efs/org-habits-file)
-               (efs/org-archive-files)
-               (efs/org-project-files)))
-        
-        (setq org-agenda-window-setup 'only-window)
+    (setq org-clock-in-switch-to-state "CURR")
 
-        (require 'org-habit)
-        (add-to-list 'org-modules 'org-habit)
-        (setq org-habit-graph-column 60)
+    (setq org-special-ctrl-a/e t)
+    (setq org-M-RET-may-split-line nil)
 
-        (setq org-todo-keywords
-              '((sequence "TODO(t)" "CURR(c!)" "HOLD(h@)"
-                          "|"
-                          "DONE(d)" "ABRT(a@)")
-                (sequence "MEET(m)"
-                          "|"
-                          "DONE(d)" "ABRT(a@)")))
+    (setq org-effort-property "EFFORT")
 
-        ;; Save Org buffers after refiling
-        (advice-add 'org-refile :after #'org-save-all-org-buffers)
+    (setq org-agenda-files
+          (append
+           (list efs/org-inbox-file
+                 efs/org-perso-file
+                 efs/org-habits-file)
+           (efs/org-archive-files)
+           (efs/org-project-files)))
+    
+    (setq org-agenda-window-setup 'only-window)
 
-        (setq org-tag-alist
-              '(("@URGENT" . ?u)
-                ("@REFILE" . ?r)
-                ("@CURR" . ?c)))
+    (require 'org-habit)
+    (add-to-list 'org-modules 'org-habit)
+    (setq org-habit-graph-column 60)
 
-        (setq efs/org-filetags
-              '("@PERSO" "@PROJECT" "@WORK"))
+    (setq org-todo-keywords
+          '((sequence "TODO(t)" "CURR(c!)" "HOLD(h@)"
+                      "|"
+                      "DONE(d)" "ABRT(a@)")
+            (sequence "MEET(m)"
+                      "|"
+                      "DONE(d)" "ABRT(a@)")))
 
-        (defun efs/agenda-skip-tags (&rest args)
-          "Skip tags passed as ARGS in the agenda view."
-          (let (beg end)
-            (org-back-to-heading t)
-            (setq beg (point)
-                  end (progn (outline-next-heading)
-                             (1- (point))))
-            (goto-char beg)
-            (setq alltags (prin1-to-string (org-get-tags)))
-            (goto-char beg)
-            (if (-some (lambda (x)
-                         (string-match x alltags))
-                       args)
-                end)))
+    ;; Save Org buffers after refiling
+    (advice-add 'org-refile :after #'org-save-all-org-buffers)
 
-        (defun efs/agenda-skip-property (property value)
-          "Skip an agenda entry if PROPERTY equals VALUE."
-          (let ((subtree-end (save-excursion
-                               (org-end-of-subtree t))))
-            (if (string=
-                 (org-entry-get nil property)
-                 value)
-                subtree-end
-              nil)))
+    (setq org-tag-alist
+          '(("@URGENT" . ?u)
+            ("@REFILE" . ?r)
+            ("@CURR" . ?c)))
 
-        (setopt org-agenda-sorting-strategy
-                '((agenda time-up deadline-up scheduled-up todo-state-up priority-down)
-                  (todo todo-state-up priority-down deadline-up)
-                  (tags todo-state-up priority-down deadline-up)
-                  (search todo-state-up priority-down deadline-up)))
+    (setq efs/org-filetags
+          '("@PERSO" "@PROJECT" "@WORK"))
 
-        (setq org-agenda-prefix-format
-              "%-10:c %-12t %-6e %s")
+    (defun efs/agenda-skip-tags (&rest args)
+      "Skip tags passed as ARGS in the agenda view."
+      (let (beg end)
+        (org-back-to-heading t)
+        (setq beg (point)
+              end (progn (outline-next-heading)
+                         (1- (point))))
+        (goto-char beg)
+        (setq alltags (prin1-to-string (org-get-tags)))
+        (goto-char beg)
+        (if (-some (lambda (x)
+                     (string-match x alltags))
+                   args)
+            end)))
 
-        (setq org-agenda-hide-tags-regexp
-              (mapconcat #'identity
-                         efs/org-filetags
-                         "\\|"))
+    (defun efs/agenda-skip-property (property value)
+      "Skip an agenda entry if PROPERTY equals VALUE."
+      (let ((subtree-end (save-excursion
+                           (org-end-of-subtree t))))
+        (if (string=
+             (org-entry-get nil property)
+             value)
+            subtree-end
+          nil)))
 
-        (setq efs/org-perso-agenda-views
-              '(("p" "Perso agenda"
-                 (
-                  (agenda ""
-                          ((org-agenda-show-all-dates nil)
-                           (org-agenda-use-time-grid nil)
-                           (org-agenda-span 14)
-                           (org-agenda-start-on-weekday nil)
-                           (org-deadline-warning-days 14)
-                           (org-agenda-show-log t)
-                           (org-agenda-skip-function
-                            '(efs/agenda-skip-tags "@WORK"))))
+    (setopt org-agenda-sorting-strategy
+            '((agenda time-up deadline-up scheduled-up todo-state-up priority-down)
+              (todo todo-state-up priority-down deadline-up)
+              (tags todo-state-up priority-down deadline-up)
+              (search todo-state-up priority-down deadline-up)))
 
-                  (tags "@PERSO+@REFILE|@PERSO+@URGENT"
-                        ((org-agenda-overriding-header
-                          "Inbox || Urgent:")))
+    (setq org-agenda-prefix-format
+          "%-10:c %-12t %-6e %s")
 
-                  (tags-todo "@PERSO+@CURR|@PERSO+TODO={CURR}|@PERSO+TODO={HOLD}"
-                             ((org-agenda-overriding-header
-                               "In Progress:")
-                              (org-agenda-skip-function
-                               '(or
-                                 (efs/agenda-skip-property
-                                  "STYLE"
-                                  "habit")
-                                 (efs/agenda-skip-tags
-                                  "monthlygoals")))))
+    (setq org-agenda-hide-tags-regexp
+          (mapconcat #'identity
+                     efs/org-filetags
+                     "\\|"))
 
-                  (tags "@PERSO+monthlygoals-TODO={DONE}"
-                        ((org-agenda-overriding-header
-                          "Monthly Goals:")))
+    (setq efs/org-perso-agenda-views
+          '(("p" "Perso agenda"
+             (
+              (agenda ""
+                      ((org-agenda-show-all-dates nil)
+                       (org-agenda-use-time-grid nil)
+                       (org-agenda-span 14)
+                       (org-agenda-start-on-weekday nil)
+                       (org-deadline-warning-days 14)
+                       (org-agenda-show-log t)
+                       (org-agenda-skip-function
+                        '(efs/agenda-skip-tags "@WORK"))))
 
-                  (tags-todo "@PERSO+TODO={TODO}-@REFILE"
-                             ((org-agenda-overriding-header
-                               "Next:")
-                              (org-agenda-skip-function
-                               '(or
-                                 (org-agenda-skip-entry-if
-                                  'scheduled)
-                                 (org-agenda-skip-entry-if
-                                  'deadline)
-                                 (efs/agenda-skip-property
-                                  "STYLE"
-                                  "habit")
-                                 (efs/agenda-skip-tags
-                                  "monthlygoals")))))
+              (tags "@PERSO+@REFILE|@PERSO+@URGENT"
+                    ((org-agenda-overriding-header
+                      "Inbox || Urgent:")))
 
-                  (todo "DONE|ABRT"
-                        ((org-agenda-overriding-header
-                          "Completed:")
-                         (org-agenda-skip-function
-                          '(efs/agenda-skip-tags
-                            "@WORK"
-                            "monthlygoals"))))))))
+              (tags-todo "@PERSO+@CURR|@PERSO+TODO={CURR}|@PERSO+TODO={HOLD}"
+                         ((org-agenda-overriding-header
+                           "In Progress:")
+                          (org-agenda-skip-function
+                           '(or
+                             (efs/agenda-skip-property
+                              "STYLE"
+                              "habit")
+                             (efs/agenda-skip-tags
+                              "monthlygoals")))))
 
-        (setq org-agenda-custom-commands
-              (append org-agenda-custom-commands
-                      efs/org-perso-agenda-views))
+              (tags "@PERSO+monthlygoals-TODO={DONE}"
+                    ((org-agenda-overriding-header
+                      "Monthly Goals:")))
 
-        (setq org-refile-targets
-              `((,efs/org-inbox-file
-                 :maxlevel . 5)
-                (,efs/org-perso-file
-                 :maxlevel . 5)
-                (,(efs/org-project-files)
-                 :maxlevel . 5)))
+              (tags-todo "@PERSO+TODO={TODO}-@REFILE"
+                         ((org-agenda-overriding-header
+                           "Next:")
+                          (org-agenda-skip-function
+                           '(or
+                             (org-agenda-skip-entry-if
+                              'scheduled)
+                             (org-agenda-skip-entry-if
+                              'deadline)
+                             (efs/agenda-skip-property
+                              "STYLE"
+                              "habit")
+                             (efs/agenda-skip-tags
+                              "monthlygoals")))))
 
-        (setq org-capture-templates
-              `(("p" "Perso Capture")
+              (todo "DONE|ABRT"
+                    ((org-agenda-overriding-header
+                      "Completed:")
+                     (org-agenda-skip-function
+                      '(efs/agenda-skip-tags
+                        "@WORK"
+                        "monthlygoals"))))))))
 
-                ("pt" "Task"
-                 entry
-                 (file ,efs/org-inbox-file)
-                 "* TODO [#B] %^{task} %^g\n  :LOGBOOK:\n  - CREATED: %U\n  :END:\n%?\n")
+    (setq org-agenda-custom-commands
+          (append org-agenda-custom-commands
+                  efs/org-perso-agenda-views))
 
-                ("pn" "Note"
-                 entry
-                 (file ,efs/org-inbox-file)
-                 "* %^{item} %^g\n  :LOGBOOK:\n  - CREATED: %U\n  :END:\n%?\n")
+    (setq org-refile-targets
+          `((,efs/org-inbox-file
+             :maxlevel . 5)
+            (,efs/org-perso-file
+             :maxlevel . 5)
+            (,(efs/org-project-files)
+             :maxlevel . 5)))
 
-                ("pm" "Meeting"
-                 entry
-                 (file ,efs/org-inbox-file)
-                 "* MEET [#A] %^{meeting} %^g\n  SCHEDULED: %^T\n  :LOGBOOK:\n  - CREATED: %U\n  :END:\n%?\n")
+    (setq org-capture-templates
+          `(("p" "Perso Capture")
 
-      	  ("pj" "Journal"
-      	   plain
-      	   (function org-journal-find-location)
-      	   "** %(format-time-string org-journal-time-format)%^{Title}\n%i%?"
-      	   :jump-to-captured t :immediate-finish t)))
+            ("pt" "Task"
+             entry
+             (file ,efs/org-inbox-file)
+             "* TODO [#B] %^{task} %^g\n  :LOGBOOK:\n  - CREATED: %U\n  :END:\n%?\n")
 
-        (efs/org-font-setup))
+            ("pn" "Note"
+             entry
+             (file ,efs/org-inbox-file)
+             "* %^{item} %^g\n  :LOGBOOK:\n  - CREATED: %U\n  :END:\n%?\n")
+
+            ("pm" "Meeting"
+             entry
+             (file ,efs/org-inbox-file)
+             "* MEET [#A] %^{meeting} %^g\n  SCHEDULED: %^T\n  :LOGBOOK:\n  - CREATED: %U\n  :END:\n%?\n")
+
+  	  ("pj" "Journal"
+  	   plain
+  	   (function org-journal-find-location)
+  	   "** %(format-time-string org-journal-time-format)%^{Title}\n%i%?"
+  	   :jump-to-captured t :immediate-finish t)))
+
+    (efs/org-font-setup))
 
 #+end_src
 
