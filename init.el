@@ -495,7 +495,9 @@
    "e" #'org-agenda-set-effort
    "c" #'org-agenda-capture
    "M-j" #'org-agenda-priority-down
-   "M-k" #'org-agenda-priority-up)
+   "M-k" #'org-agenda-priority-up
+   "M-l" #'org-agenda-todo-nextset
+   "M-h" #'org-agenda-todo-previousset)
 
   :config
   (setq org-ellipsis " ")
