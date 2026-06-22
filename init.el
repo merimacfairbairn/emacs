@@ -1,7 +1,3 @@
-;; NOTE: init.el is now generated from Emacs.org.  Please edit that file
-;;       in Emacs and init.el will be generated automatically!
-
-;; You will most likely need to adjust this font size for your system!
 (defvar efs/default-font-size 140)
 (defvar efs/default-variable-font-size 140)
 
@@ -37,7 +33,7 @@
 
 (require 'use-package)
 (setq use-package-always-ensure t)
-(setq use-package-always-defer t)
+(setq use-package-always-defer nil)
 
 (use-package auto-package-update
   :custom
@@ -90,6 +86,9 @@
 (setq split-height-threshold nil)
 (setq split-width-threshold 0)
 
+;; Save place mode
+(save-place-mode t)
+
 ;; Disable line numbers for some modes
 (dolist (mode '(org-mode-hook
                 term-mode-hook
@@ -107,6 +106,7 @@
 (set-face-attribute 'variable-pitch nil :font "Open Sans" :height efs/default-variable-font-size :weight 'regular)
 
 (use-package mixed-pitch
+  :disabled t
   :hook (org-mode . mixed-pitch-mode)
   :config
   ;; Ensure certain faces remain fixed-pitch
@@ -122,16 +122,139 @@
   ;; Optionally adjust the height of variable-pitch text
   (setq mixed-pitch-set-height t))
 
+;; Make ESC quit prompts
+(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
+
+(use-package general
+  :after evil
+  :config
+
+  (general-define-key
+    :states '(normal insert visual emacs)
+    :prefix-map 'efs/leader-map
+    :prefix "SPC"
+    :non-normal-prefix "M-SPC")
+  
+  (general-create-definer efs/leader-keys
+    :keymaps 'efs/leader-map)
+
+  (general-create-definer efs/local-leader-keys
+    :states '(normal visual motion)
+    :prefix ","
+    :non-normal-prefix "M-,")
+  
+  (efs/leader-keys
+    ;; M-x
+    "SPC" '(execute-extended-command :which-key "M-x")
+    "/" '(consult-ripgrep :which-key "Search Project")
+    "!" '(shell-command :which-key "shell")
+    "u" '(universal-argument :wk "Universal Argument")
+    
+    ;; HELP
+    "h" '(:ignore t :which-key "help")
+    "hf" '(describe-function :which-key "describe function")
+    "hm" '(describe-mode :which-key "describe mode")
+    "hb" '(describe-bindings :which-key "describe bindings")
+    "hv" '(describe-variable :which-key "describe variable")
+    "hk" '(describe-key :which-key "describe key")
+    "hx" '(describe-command :which-key "describe command")
+    "ho" '(describe-symbol :which-key "describe symbol")
+    "hs" '(describe-syntax :which-key "describe syntax")
+    "hrr" '((lambda () (interactive) (load-file user-init-file)) :which-key "reload config")
+
+    ;; BUFFERS
+    "b" '(:ignore t :which-key "bufs")
+    "bb" '(consult-buffer  :which-key "switch")
+    "bk" '(kill-current-buffer :which-key "kill")
+    "be" '(erase-buffer :which-key "erase")
+    "bs" '(scratch-buffer :which-key "scratch")
+
+    ;; WINDOWS
+    "w" '(:ignore t :wk "windows")
+    "wh" '(evil-window-left :wk "left")
+    "wj" '(evil-window-down :wk "down")
+    "wk" '(evil-window-up :wk "up")
+    "wl" '(evil-window-right :wk "right")
+    "ww" '(evil-window-next :wk "next")
+
+    "wH" '(evil-window-move-far-left :wk "move left")
+    "wJ" '(evil-window-move-very-bottom :wk "move down")
+    "wK" '(evil-window-move-very-top :wk "move up")
+    "wL" '(evil-window-move-far-right :wk "move right")
+
+    "w+" '((lambda () (interactive)
+             (evil-window-increase-height 5))
+           :which-key "increase height")
+
+    "w-" '((lambda () (interactive)
+             (evil-window-decrease-height 5))
+	   :which-key "decrease height")
+
+    "w>" '((lambda () (interactive)
+             (evil-window-increase-width 5))
+	   :which-key "increase width")
+
+    "w<" '((lambda () (interactive)
+             (evil-window-decrease-width 5))
+	   :which-key "decrease width")
+
+    "ws" '(evil-window-split :wk "split")
+    "wv" '(evil-window-vsplit :wk "vsplit")
+
+    "wq" '(evil-window-delete :wk "quit")
+
+    ;; FILES
+    "." '(find-file :which-key "find file")
+    "f" '(:ignore t :which-key "files")
+    "fp" '(:ignore t :wk "perso agenda")
+    ;; "fpp" '(lambda () (interactive) (efs/open-org-file efs/org-perso-file))
+    ;; "fpi" '(lambda () (interactive) (efs/open-org-file efs/org-inbox-file))
+    ;; "fpl" '(lambda () (interactive) (efs/open-org-file efs/org-logbook-archive-file) "logbook.org")
+    "fde" '(lambda () (interactive) (find-file (expand-file-name "~/.config/emacs/init.org")))))
+
+(use-package evil
+  :init
+  (setq evil-want-integration t)
+  (setq evil-want-keybinding nil)
+  (setq evil-want-C-u-scroll t)
+  (setq evil-want-C-i-jump t)
+  (setq evil-undo-system 'undo-redo)
+  :config
+  (evil-mode 1)
+  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
+  (define-key evil-insert-state-map (kbd "C-c") 'evil-normal-state)
+  (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
+  (define-key evil-insert-state-map (kbd "C-v") #'yank)
+
+  ;; Use visual line motions even outside of visual-line-mode buffers
+  (evil-global-set-key 'motion "j" 'evil-next-visual-line)
+  (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
+
+  (evil-set-initial-state 'messages-buffer-mode 'normal)
+  (evil-set-initial-state 'dashboard-mode 'normal))
+
+(use-package evil-collection
+  :after evil
+  :ensure t
+  :config
+  (evil-collection-init))
+
+(use-package evil-commentary
+  :after evil
+  :config
+  (evil-commentary-mode))
+
 (use-package command-log-mode
   :commands command-log-mode)
 
 (use-package doom-themes
   :init (load-theme 'doom-gruvbox t))
 
-(use-package all-the-icons)
+(use-package all-the-icons
+  :after doom-modeline)
 
 (use-package doom-modeline
-  :init (doom-modeline-mode 1)
+  :hook (after-init . doom-modeline-mode)
   :custom ((doom-modeline-height 15)))
 
 (use-package which-key
@@ -143,7 +266,6 @@
 
 ;; Completion UI
 (use-package vertico
-  :ensure t
   :bind (:map vertico-map
 	      ("C-j" . vertico-next)
 	      ("C-k" . vertico-previous)
@@ -162,12 +284,12 @@
 ;; Rich annotations
 (use-package marginalia
   :after vertico
-  :ensure t
   :init
   (marginalia-mode))
 
 ;; Better matching
 (use-package orderless
+  :after vertico
   :custom
   (completion-styles '(orderless basic))
   (completion-category-defaults nil)
@@ -198,15 +320,6 @@
   ([remap describe-command] . helpful-command)
   ([remap describe-variable] . helpful-variable)
   ([remap describe-key] . helpful-key))
-
-(use-package hydra
-  :defer t)
-
-(defhydra hydra-text-scale (:timeout 4)
-  "scale text"
-  ("j" text-scale-increase "in")
-  ("k" text-scale-decrease "out")
-  ("f" nil "finished" :exit t))
 
 (defun efs/org-font-setup ()
   ;; Replace list hyphen with dot
@@ -299,7 +412,6 @@
     (org-narrow-to-subtree))
   (goto-char (point-max)))
 
-
 (defun efs/org-mode-setup ()
   (org-indent-mode)
   (variable-pitch-mode 1)
@@ -307,8 +419,84 @@
 
 (use-package org
   :pin org
-  :commands (org-capture org-agenda)
   :hook (org-mode . efs/org-mode-setup)
+  :general
+  (efs/leader-keys
+    "a"  'org-agenda :wk "agenda"
+    "c" 'org-capture :wk "capture")
+  
+  :general-config
+  (efs/local-leader-keys
+    :keymaps 'org-mode-map
+    ;; Checkboxes
+    "SPC" '(org-toggle-checkbox :wk "toggle checkbox")
+    ;; TODOs
+    "t"  '(org-todo :wk "todo")
+    ;; Dates
+    "d"  '(org-deadline :wk "deadline")
+    "s"  '(org-schedule :wk "schedule")
+    "T"  '(org-time-stamp :wk "timestamp")
+    ;; Edit source
+    "'" '(org-edit-src-code :wk "edit source")
+    ;; Headings
+    "h"  '(:ignore t :wk "heading")
+    "hh" '(org-insert-heading :wk "insert")
+    "ht" '(org-insert-todo-heading :wk "todo heading")
+    "hu" '(org-up-element :wk "up")
+    "hn" '(org-next-visible-heading :wk "next")
+    "hp" '(org-previous-visible-heading :wk "prev")
+    ;; Subtree
+    "x"  '(:ignore t :wk "subtree")
+    "xa" '(org-archive-subtree :wk "archive")
+    "xr" '(org-refile :wk "refile")
+    "xk" '(org-cut-subtree :wk "cut")
+    "xy" '(org-copy-subtree :wk "copy")
+    ;; Priority
+    "p"  '(:ignore t :wk "priority")
+    "pp" '(org-priority :wk "set")
+    ;; Links
+    "l"  '(:ignore t :wk "links")
+    "ll" '(org-cliplink :wk "cliplink")
+    "li" '(org-insert-link :wk "insert")
+    "ls" '(org-store-link :wk "store")
+    "lm" '(org-download-clipboard :wk "insert media")
+    "lo" '(org-open-at-point :wk "open")
+    "ln" '(org-next-link :wk "next")
+    "lp" '(org-previous-link :wk "prev")
+    ;; Tables
+    "b"  '(:ignore t :wk "table")
+    "ba" '(org-table-align :wk "align")
+    "br" '(org-table-recalculate :wk "recalc")
+    ;; Clocking
+    "c"  '(:ignore t :wk "clock")
+    "ci" '(org-clock-in :wk "in")
+    "co" '(org-clock-out :wk "out")
+    "cr" '(org-clock-report :wk "report")
+    ;; Navigation
+    "g"  '(:ignore t :wk "goto")
+    "gc" '(org-goto :wk "goto")
+    "gi" '(org-id-get-create :wk "create id")
+    ;; Visibility
+    "v"  '(:ignore t :wk "visibility")
+    "vc" '(org-cycle :wk "cycle")
+    "va" '(org-cycle-global :wk "global cycle")
+    ;; Export
+    "e"  '(:ignore t :wk "export")
+    "eh" '(org-html-export-to-html :wk "html")
+    "ep" '(org-latex-export-to-pdf :wk "pdf")
+    ;; Babel
+    "r"  '(:ignore t :wk "run")
+    "rb" '(org-babel-execute-src-block :wk "block")
+    "ra" '(org-babel-execute-buffer :wk "buffer"))
+
+  (general-define-key
+   :states 'normal
+   :keymaps 'org-agenda-mode-map
+   "e" #'org-agenda-set-effort
+   "c" #'org-agenda-capture
+   "M-j" #'org-agenda-priority-down
+   "M-k" #'org-agenda-priority-up)
+
   :config
   (setq org-ellipsis " ")
 
@@ -494,6 +682,7 @@
   (visual-fill-column-mode 1))
 
 (use-package visual-fill-column
+  :defer t
   :hook (org-mode . efs/org-mode-visual-fill))
 
 (use-package org-journal
@@ -506,7 +695,6 @@
   (setq org-journal-file-format "%Y-%m-%d.org"))
 
 (use-package evil-org
-  :ensure t
   :after org
   :hook (org-mode . evil-org-mode)
   :config
@@ -545,7 +733,7 @@
 (add-hook 'org-mode-hook (lambda () (add-hook 'after-save-hook #'efs/org-babel-tangle-config)))
 
 (use-package org-modern
-  :ensure t
+  :defer t
   :config
   (setopt org-modern-star 'replace)
   (setopt org-modern-replace-stars "◉○●")
@@ -554,6 +742,7 @@
   (org-agenda-finalize . org-modern-agenda))
 
 (use-package org-appear
+  :defer t
   :commands (org-appear-mode)
   :hook (org-mode . org-appear-mode)
   :config
@@ -563,15 +752,18 @@
 	org-appear-autosubmarkers t))
 
 (use-package org-cliplink
+  :defer t
   :commands (org-cliplink))
 
 (use-package jinx
+  :defer t
   :hook (text-mode . jinx-mode)
   :bind ([remap ispell-word] . jinx-correct)
   :custom
   (jinx-languages "en_GB"))
 
 (use-package org-download
+  :defer t
   :commands (org-download-clipboard)
   :config
   (setq org-download-method 'directory
@@ -584,294 +776,21 @@
 
 (use-package org-roam
   :commands (org-roam-node-find org-roam-node-insert)
-  :config
-  (setq org-roam-directory (expand-file-name "roam/" efs/org-directory)))
-
-;; Make ESC quit prompts
-(global-set-key (kbd "<escape>") 'keyboard-escape-quit)
-
-(use-package general
-  :after evil
-  :config
-  (general-create-definer efs/leader-keys
-    :states '(normal insert visual emacs)
-    :prefix "SPC"
-    :global-prefix "C-SPC")
-  (general-create-definer efs/local-leader-keys
-    :states '(normal visual motion)
-    :prefix ","
-    :global-prefix "C-,")
-  
-  (efs/local-leader-keys
-    :keymaps 'org-mode-map
-
-    ;; Checkboxes
-    "SPC" '(org-toggle-checkbox :wk "toggle checkbox")
-
-    ;; TODOs
-    "t"  '(org-todo :wk "todo")
-
-    ;; Dates
-    "d"  '(org-deadline :wk "deadline")
-    "s"  '(org-schedule :wk "schedule")
-    "T"  '(org-time-stamp :wk "timestamp")
-
-    ;; Edit source
-    "'" '(org-edit-src-code :wk "edit source")
-
-    ;; Headings
-    "h"  '(:ignore t :wk "heading")
-    "hh" '(org-insert-heading :wk "insert")
-    "ht" '(org-insert-todo-heading :wk "todo heading")
-    "hu" '(org-up-element :wk "up")
-    "hn" '(org-next-visible-heading :wk "next")
-    "hp" '(org-previous-visible-heading :wk "prev")
-
-    ;; Subtree
-    "x"  '(:ignore t :wk "subtree")
-    "xa" '(org-archive-subtree :wk "archive")
-    "xr" '(org-refile :wk "refile")
-    "xk" '(org-cut-subtree :wk "cut")
-    "xy" '(org-copy-subtree :wk "copy")
-
-    ;; Priority
-    "p"  '(:ignore t :wk "priority")
-    "pp" '(org-priority :wk "set")
-
-    ;; Links
-    "l"  '(:ignore t :wk "links")
-    "ll" '(org-cliplink :wk "cliplink")
-    "li" '(org-insert-link :wk "insert")
-    "ls" '(org-store-link :wk "store")
-    "lm" '(org-download-clipboard :wk "insert media")
-    "lo" '(org-open-at-point :wk "open")
-    "ln" '(org-next-link :wk "next")
-    "lp" '(org-previous-link :wk "previous")
-
-    ;; Tables
-    "b"  '(:ignore t :wk "table")
-    "ba" '(org-table-align :wk "align")
-    "br" '(org-table-recalculate :wk "recalc")
-
-    ;; Clocking
-    "c"  '(:ignore t :wk "clock")
-    "ci" '(org-clock-in :wk "in")
-    "co" '(org-clock-out :wk "out")
-    "cr" '(org-clock-report :wk "report")
-
-    ;; Navigation
-    "g"  '(:ignore t :wk "goto")
-    "gc" '(org-goto :wk "goto")
-    "gi" '(org-id-get-create :wk "create id")
-
-    ;; Visibility
-    "v"  '(:ignore t :wk "visibility")
-    "vc" '(org-cycle :wk "cycle")
-    "va" '(org-cycle-global :wk "global cycle")
-
-    ;; Export
-    "e"  '(:ignore t :wk "export")
-    "eh" '(org-html-export-to-html :wk "html")
-    "ep" '(org-latex-export-to-pdf :wk "pdf")
-
-    ;; Babel
-    "r"  '(:ignore t :wk "run")
-    "rb" '(org-babel-execute-src-block :wk "block")
-    "ra" '(org-babel-execute-buffer :wk "buffer")
-    )
-
+  :general
   (efs/leader-keys
-    ;; M-x
-    "SPC" '(execute-extended-command :which-key "M-x")
-    "/" '(consult-ripgrep :which-key "Search Project")
-    "!" '(shell-command :which-key "shell")
-    "u" '(universal-argument :wk "Universal Argument")
-    
-    ;; HELP
-    "h" '(:ignore t :which-key "help")
-    "hf" '(describe-function :which-key "describe function")
-    "hm" '(describe-mode :which-key "describe mode")
-    "hb" '(describe-bindings :which-key "describe bindings")
-    "hv" '(describe-variable :which-key "describe variable")
-    "hk" '(describe-key :which-key "describe key")
-    "hx" '(describe-command :which-key "describe command")
-    "ho" '(describe-symbol :which-key "describe symbol")
-    "hs" '(describe-syntax :which-key "describe syntax")
-    "hrr" '((lambda () (interactive) (load-file user-init-file)) :which-key "reload config")
-
-    ;; PROJECTILE
-    "p" '(projectile-command-map :which-key "projectile")
-
-    ;; GIT
-    "g" '(:ignore t :which-key "git")
-    "gs" '(magit-status :which-key "status")
-    "gi" '(magit-init :which-key "init")
-
-    ;; TOGGLES
-    "t"  '(:ignore t :which-key "toggles")
-    "ts" '(hydra-text-scale/body :which-key "scale text")
-
-    ;; BUFFERS
-    "b" '(:ignore t :which-key "bufs")
-    "bb" '(consult-buffer  :which-key "switch")
-    "bk" '(kill-current-buffer :which-key "kill")
-    "be" '(erase-buffer :which-key "erase")
-    "bs" '(scratch-buffer :which-key "scratch")
-
-    ;; CAPTURES
-    "c" '(:ignore t :wk "captures")
-    "cc" '(org-capture :wk "menu")
-
-    ;; ORG ROAM
-    "n" '(:ignore t :wk "roam")
+    "n" '(:ignore t :wk "Org-Roam")
     "nf" '(org-roam-node-find :wk "find node")
     "ni" '(org-roam-node-insert :wk "insert node")
     "nc" '(org-roam-capture :wk "capture node")
+    "nd" '(:ignore t :wk "dailies"))
+  :general-config
+  (efs/leader-keys
     "nb" '(org-roam-buffer-toggle :wk "toggle buffer")
     "nR" '(org-roam-node-random :wk "random node")
     "nr" '(org-roam-refile :wk "refile")
-    "nd" '(:ignore t :wk "dailies")
-
-    ;; WINDOWS
-    "w" '(:ignore t :wk "windows")
-    "wh" '(evil-window-left :wk "left")
-    "wj" '(evil-window-down :wk "down")
-    "wk" '(evil-window-up :wk "up")
-    "wl" '(evil-window-right :wk "right")
-    "ww" '(evil-window-next :wk "next")
-
-    "wH" '(evil-window-move-far-left :wk "move left")
-    "wJ" '(evil-window-move-very-bottom :wk "move down")
-    "wK" '(evil-window-move-very-top :wk "move up")
-    "wL" '(evil-window-move-far-right :wk "move right")
-
-    "w+" '((lambda () (interactive)
-             (evil-window-increase-height 5))
-           :which-key "increase height")
-
-    "w-" '((lambda () (interactive)
-             (evil-window-decrease-height 5))
-	   :which-key "decrease height")
-
-    "w>" '((lambda () (interactive)
-             (evil-window-increase-width 5))
-	   :which-key "increase width")
-
-    "w<" '((lambda () (interactive)
-             (evil-window-decrease-width 5))
-	   :which-key "decrease width")
-
-    "ws" '(evil-window-split :wk "split")
-    "wv" '(evil-window-vsplit :wk "vsplit")
-
-    "wq" '(evil-window-delete :wk "quit")
-
-    ;; AGENDA
-    "a" '(org-agenda :which-key "Agenda")
-
-    ;; FILES
-    "." '(find-file :which-key "find file")
-    "f" '(:ignore t :which-key "files")
-    "fp" '(:ignore t :wk "perso agenda")
-    "fpp" '(lambda () (interactive) (efs/open-org-file efs/org-perso-file))
-    "fpi" '(lambda () (interactive) (efs/open-org-file efs/org-inbox-file))
-    "fpl" '(lambda () (interactive) (efs/open-org-file efs/org-logbook-archive-file) "logbook.org")
-    "fde" '(lambda () (interactive) (find-file (expand-file-name "~/.config/emacs/init.org")))))
-
-(use-package evil
-  :init
-  (setq evil-want-integration t)
-  (setq evil-want-keybinding nil)
-  (setq evil-want-C-u-scroll t)
-  (setq evil-want-C-i-jump t)
-  (setq evil-undo-system 'undo-redo)
-  :config
-  (evil-mode 1)
-  (define-key evil-insert-state-map (kbd "C-g") 'evil-normal-state)
-  (define-key evil-insert-state-map (kbd "C-c") 'evil-normal-state)
-  (define-key evil-insert-state-map (kbd "C-h") 'evil-delete-backward-char-and-join)
-  (define-key evil-insert-state-map (kbd "C-v") #'yank)
-
-  ;; Use visual line motions even outside of visual-line-mode buffers
-  (evil-global-set-key 'motion "j" 'evil-next-visual-line)
-  (evil-global-set-key 'motion "k" 'evil-previous-visual-line)
-
-  (evil-set-initial-state 'messages-buffer-mode 'normal)
-  (evil-set-initial-state 'dashboard-mode 'normal))
-
-(use-package evil-collection
-  :after evil
-  :ensure t
-  :config
-  (evil-collection-init))
-
-(use-package evil-commentary
-  :after evil
-  :config
-  (evil-commentary-mode))
-
-(defun efs/lsp-mode-setup ()
-  (setq lsp-headerline-breadcrumb-segments '(path-up-to-project file symbols))
-  (lsp-headerline-breadcrumb-mode))
-
-(use-package lsp-mode
-  :commands (lsp lsp-deferred)
-  :hook (lsp-mode . efs/lsp-mode-setup)
-  :init
-  (setq lsp-keymap-prefix "C-c l")  ;; Or 'C-l', 's-l'
-  :config
-  (lsp-enable-which-key-integration t))
-
-(use-package lsp-ui
-  :hook (lsp-mode . lsp-ui-mode)
+    )
   :custom
-  (lsp-ui-doc-position 'bottom))
-
-(use-package lsp-treemacs
-  :after lsp)
-
-(use-package lsp-ivy
-  :after lsp)
-
-(use-package dap-mode
-  ;; Uncomment the config below if you want all UI panes to be hidden by default!
-  ;; :custom
-  ;; (lsp-enable-dap-auto-configure nil)
-  ;; :config
-  ;; (dap-ui-mode 1)
-  :commands dap-debug
-  :config
-  ;; Set up Node debugging
-  (require 'dap-node)
-  (dap-node-setup) ;; Automatically installs Node debug adapter if needed
-
-  ;; Bind `C-c l d` to `dap-hydra` for easy access
-  (general-define-key
-   :keymaps 'lsp-mode-map
-   :prefix lsp-keymap-prefix
-   "d" '(dap-hydra t :wk "debugger")))
-
-(use-package typescript-mode
-  :mode "\\.ts\\'"
-  :hook (typescript-mode . lsp-deferred)
-  :config
-  (setq typescript-indent-level 2))
-
-(use-package python-mode
-  :ensure t
-  :hook (python-mode . lsp-deferred)
-  :custom
-  ;; NOTE: Set these if Python 3 is called "python3" on your system!
-  ;; (python-shell-interpreter "python3")
-  ;; (dap-python-executable "python3")
-  (dap-python-debugger 'debugpy)
-  :config
-  (require 'dap-python))
-
-(use-package pyvenv
-  :after python-mode
-  :config
-  (pyvenv-mode 1))
+  (org-roam-directory (expand-file-name "roam/" efs/org-directory)))
 
 (use-package corfu
   :custom
@@ -911,9 +830,10 @@
 (use-package projectile
   :diminish projectile-mode
   :config (projectile-mode)
-  :custom ((projectile-completion-system 'ivy))
-  :bind-keymap
-  ("C-c p" . projectile-command-map)
+  :custom ((projectile-completion-system 'auto))
+  :general
+  (efs/leader-keys
+    "p" '(:keymap projectile-command-map :wk "projectile"))
   :init
 
   ;; NOTE: Set this to the folder where you keep your Git repos!
@@ -924,10 +844,14 @@
   (setq projectile-switch-project-action #'projectile-dired))
 
 (use-package consult-projectile
-  )
+  :after projectile)
 
 (use-package magit
-  :commands magit-status
+  :general
+  (efs/leader-keys
+    "g" '(:ignore t :which-key "git")
+    "gs" '(magit-status :which-key "status")
+    "gi" '(magit-init :which-key "init"))
   :custom
   (magit-display-buffer-function #'magit-display-buffer-same-window-except-diff-v1))
 
@@ -944,61 +868,9 @@
   :hook (prog-mode . rainbow-delimiters-mode))
 
 (use-package javelin
-  :ensure t
+  :defer t
   :config
   (global-javelin-minor-mode 1))
-
-(use-package term
-  :commands term
-  :config
-  (setq explicit-shell-file-name "bash") ;; Change this to zsh, etc
-  ;;(setq explicit-zsh-args '())         ;; Use 'explicit-<shell>-args for shell-specific args
-
-  ;; Match the default Bash shell prompt.  Update this if you have a custom prompt
-  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *"))
-
-(use-package eterm-256color
-  :hook (term-mode . eterm-256color-mode))
-
-(use-package vterm
-  :commands vterm
-  :config
-  (setq term-prompt-regexp "^[^#$%>\n]*[#$%>] *")  ;; Set this to match your custom shell prompt
-  ;;(setq vterm-shell "zsh")                       ;; Set this to customize the shell to launch
-  (setq vterm-max-scrollback 10000))
-
-(when (eq system-type 'windows-nt)
-  (setq explicit-shell-file-name "powershell.exe")
-  (setq explicit-powershell.exe-args '()))
-
-(defun efs/configure-eshell ()
-  ;; Save command history when commands are entered
-  (add-hook 'eshell-pre-command-hook 'eshell-save-some-history)
-
-  ;; Truncate buffer for performance
-  (add-to-list 'eshell-output-filter-functions 'eshell-truncate-buffer)
-
-  ;; Bind some useful keys for evil-mode
-  (evil-define-key '(normal insert visual) eshell-mode-map (kbd "<home>") 'eshell-bol)
-  (evil-normalize-keymaps)
-
-  (setq eshell-history-size         10000
-        eshell-buffer-maximum-lines 10000
-        eshell-hist-ignoredups t
-        eshell-scroll-to-bottom-on-input t))
-
-(use-package eshell-git-prompt
-  :after eshell)
-
-(use-package eshell
-  :hook (eshell-first-time-mode . efs/configure-eshell)
-  :config
-
-  (with-eval-after-load 'esh-opt
-    (setq eshell-destroy-buffer-when-process-dies t)
-    (setq eshell-visual-commands '("htop" "zsh" "vim")))
-
-  (eshell-git-prompt-use-theme 'powerline))
 
 (use-package dired
   :ensure nil
