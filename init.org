@@ -1056,7 +1056,11 @@ Dependencies:
       "nf" '(org-roam-node-find :wk "find node")
       "ni" '(org-roam-node-insert :wk "insert node")
       "nc" '(org-roam-capture :wk "capture node")
-      "nd" '(:ignore t :wk "dailies"))
+      "nd" '(:ignore t :wk "dailies")
+      "ndY" '(org-roam-dailies-capture-yesterday :wk "Capture yesterday")
+      "ndy" '(org-roam-dailies-find-today :wk "Go to today")
+      "ndT" '(org-roam-dailies-capture-today :wk "Capture today")
+      "ndt" '(org-roam-dailies-find-today :wk "Go to today"))
     :general-config
     (efs/leader-keys
       "nb" '(org-roam-buffer-toggle :wk "toggle buffer")
