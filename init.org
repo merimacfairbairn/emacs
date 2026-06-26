@@ -161,31 +161,6 @@ This section configures basic UI settings that remove unneeded elements to make 
 
 #+end_src
 
-*** Mixed-pitch mode
-
-Mixed pitch to keep variable font where sensible
-
-#+begin_src emacs-lisp
-
-  (use-package mixed-pitch
-    :disabled t
-    :hook (org-mode . mixed-pitch-mode)
-    :config
-    ;; Ensure certain faces remain fixed-pitch
-    (setq mixed-pitch-fixed-pitch-faces
-          '(org-code
-            org-block
-            org-table
-            org-verbatim
-            org-meta-line
-            org-checkbox
-            line-number
-            line-number-current-line))
-    ;; Optionally adjust the height of variable-pitch text
-    (setq mixed-pitch-set-height t))
-
-#+end_src
-
 * Keybinding Configuration
 
 This configuration uses [[https://evil.readthedocs.io/en/latest/index.html][evil-mode]] for a Vi-like modal editing experience.  [[https://github.com/noctuid/general.el][general.el]] is used for easy keybinding configuration that integrates well with which-key.  [[https://github.com/emacs-evil/evil-collection][evil-collection]] is used to automatically configure various Emacs modes with Vi-like keybindings for evil-mode.
@@ -992,7 +967,7 @@ Better-looking org files
 
 #+end_src
 
-** Org-cliplink
+** Org-Cliplink
 
 [[https://github.com/rexim/org-cliplink][Org-cliplink]] is a package that inserts pretty online links in org.
 
@@ -1042,6 +1017,7 @@ Dependencies:
     (add-hook 'dired-mode-hook #'org-download-enable))
 
 #+end_src
+
 * Org Roam
 
 [[https://www.orgroam.com/][Org-roam]] Is a package that helps with quickly capturing and organising notes in org-files leveraging Zettelkasten system.

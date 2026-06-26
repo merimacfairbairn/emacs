@@ -105,23 +105,6 @@
 ;; Set the variable pitch face
 (set-face-attribute 'variable-pitch nil :font "Open Sans" :height efs/default-variable-font-size :weight 'regular)
 
-(use-package mixed-pitch
-  :disabled t
-  :hook (org-mode . mixed-pitch-mode)
-  :config
-  ;; Ensure certain faces remain fixed-pitch
-  (setq mixed-pitch-fixed-pitch-faces
-        '(org-code
-          org-block
-          org-table
-          org-verbatim
-          org-meta-line
-          org-checkbox
-          line-number
-          line-number-current-line))
-  ;; Optionally adjust the height of variable-pitch text
-  (setq mixed-pitch-set-height t))
-
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
 
