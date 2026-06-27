@@ -796,6 +796,9 @@
   :custom
   (org-roam-directory (expand-file-name "roam/" efs/org-directory)))
 
+(use-package eglot
+  :hook (prog-mode . eglot-ensure))
+
 (use-package corfu
   :custom
   (corfu-auto t)

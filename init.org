@@ -1051,7 +1051,13 @@ Dependencies:
 * Development
 
 ** LSP
-I need to add eglot to this for lsp functionality
+
+#+begin_src emacs-lisp
+
+  (use-package eglot
+    :hook (prog-mode . eglot-ensure))
+
+#+end_src
 
 ** Corfu and Cape
 Modern completions stack
