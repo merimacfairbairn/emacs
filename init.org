@@ -1182,7 +1182,17 @@ Emacs' built in commenting functionality =comment-dwim= (usually bound to =M-;=)
 #+end_src
 
 * Terminals
-I need to completely redo this sections and only leave the packages needed for my use-case
+** Vterm
+
+#+begin_src emacs-lisp
+  
+  (use-package vterm
+    :general
+    (efs/leader-keys
+      "tt" 'vterm-other-window
+      "to" 'vterm))
+
+#+end_src
 
 * File Management
 

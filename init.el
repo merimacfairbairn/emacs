@@ -876,6 +876,12 @@
   :config
   (global-javelin-minor-mode 1))
 
+(use-package vterm
+  :general
+  (efs/leader-keys
+    "tt" 'vterm-other-window
+    "to" 'vterm))
+
 (use-package dired
   :ensure nil
   :commands (dired dired-jump)
