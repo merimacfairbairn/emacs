@@ -89,6 +89,9 @@
 ;; Save place mode
 (save-place-mode t)
 
+;; Desktop Save mode on
+(desktop-save-mode 1)
+
 ;; Disable line numbers for some modes
 (dolist (mode '(org-mode-hook
                 term-mode-hook
@@ -97,13 +100,23 @@
                 eshell-mode-hook))
   (add-hook mode (lambda () (display-line-numbers-mode 0))))
 
-(set-face-attribute 'default nil :font "Iosevka" :height efs/default-font-size)
+(defun efs/set-font-faces ()
+  (message "Setting Faces")
+  (set-face-attribute 'default nil :font "Iosevka Curly" :height efs/default-font-size)
 
-;; Set the fixed pitch face
-(set-face-attribute 'fixed-pitch nil :font "Iosevka Curly" :height efs/default-font-size)
+  ;; Set the fixed pitch face
+  (set-face-attribute 'fixed-pitch nil :font "Iosevka Curly" :height efs/default-font-size)
 
-;; Set the variable pitch face
-(set-face-attribute 'variable-pitch nil :font "Open Sans" :height efs/default-variable-font-size :weight 'regular)
+  ;; Set the variable pitch face
+  (set-face-attribute 'variable-pitch nil :font "Iosevka Aile" :height efs/default-variable-font-size :weight 'regular))
+
+(if (daemonp)
+    (add-hook 'after-make-frame-functions
+	      (lambda (frame)
+		;; (setq doom-modeline-icon t)
+		(with-selected-frame frame
+		  (efs/set-font-faces))))
+  (efs/set-font-faces))
 
 ;; Make ESC quit prompts
 (global-set-key (kbd "<escape>") 'keyboard-escape-quit)
@@ -319,7 +332,7 @@
                   (org-level-6 . 1.1)
                   (org-level-7 . 1.1)
                   (org-level-8 . 1.1)))
-    (set-face-attribute (car face) nil :font "Iosevka Aile" :weight 'regular :height (cdr face)))
+    (set-face-attribute (car face) nil :font "Iosevka Aile" :weight 'light :height (cdr face)))
 
   ;; Ensure that anything that should be fixed-pitch in Org files appears that way
   (set-face-attribute 'org-block nil    :foreground nil :inherit 'fixed-pitch)
@@ -687,9 +700,18 @@
 
 (use-package org-journal
   :commands (org-journal-new-entry)
+  :general
+  (efs/leader-keys
+    "j" '(:ignore t :wk "journal")
+    "jn" 'org-journal-new-entry)
+  :general-config
+  (general-define-key
+    :keymaps 'org-journal-mode
+    :states 'normal
+    "M-n" 'org-journal-next-entry
+    "M-p" 'org-journal-previous-entry)
   :init
-  ;; Change default prefix key (C-c j); needs to be set before loading org-journal
-  (setq org-journal-prefix-key "C-c j")
+  (setq org-journal-prefix-key nil)
   :config
   (setq org-journal-dir (expand-file-name "diary/" efs/org-directory))
   (setq org-journal-file-format "%Y-%m-%d.org"))
@@ -773,6 +795,9 @@
         org-download-heading-lvl nil
         org-image-actual-width 600)
   (add-hook 'dired-mode-hook #'org-download-enable))
+
+(use-package org-present
+  :commands (org-present))
 
 (use-package org-roam
   :commands (org-roam-node-find org-roam-node-insert)
