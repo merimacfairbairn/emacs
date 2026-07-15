@@ -88,12 +88,20 @@ We use the [[https://github.com/emacscollective/no-littering/blob/master/no-litt
   ;; reliably, set `user-emacs-directory` before loading no-littering!
   					;(setq user-emacs-directory "~/.cache/emacs")
 
-  (use-package no-littering)
+  (use-package no-littering
+    :config
 
-  ;; no-littering doesn't set this by default so we must place
-  ;; auto save files in the same path as it uses for sessions
-  (setq auto-save-file-name-transforms
-        `((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+    ;; no-littering doesn't set this by default so we must place
+    ;; auto save files in the same path as it uses for sessions
+    (setq auto-save-file-name-transforms
+  	`((".*" ,(no-littering-expand-var-file-name "auto-save/") t)))
+
+    ;; backup files
+    (setq backup-directory-alist
+      `(("." . ,(no-littering-expand-var-file-name "backup/"))))
+
+    ;; don't create lockfiles
+    (setq create-lockfiles nil))
 
 #+end_src
 
