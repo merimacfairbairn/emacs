@@ -127,6 +127,11 @@ This section configures basic UI settings that remove unneeded elements to make 
   (global-display-line-numbers-mode t)
   (setq display-line-numbers-type 'relative)
 
+  ;; Scroll
+  (setq scroll-margin 7
+   scroll-conservatively 101)
+  (pixel-scroll-precision-mode 1)
+
   ;; Set frame transparency
   (set-frame-parameter (selected-frame) 'alpha efs/frame-transparency)
   (add-to-list 'default-frame-alist `(alpha . ,efs/frame-transparency))
@@ -1133,7 +1138,6 @@ Org-Present for pretty presentations just in case
     (markdown-header-face-4 ((t (:height 1.15 :weight bold :inherit markdown-header-face))))
     (markdown-header-face-5 ((t (:height 1.1  :weight bold :inherit markdown-header-face))))
     (markdown-header-face-6 ((t (:height 1.05 :weight semi-bold :inherit markdown-header-face)))))
-  :hook
 
 #+end_src
 

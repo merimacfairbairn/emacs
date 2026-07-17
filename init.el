@@ -79,6 +79,11 @@
 (global-display-line-numbers-mode t)
 (setq display-line-numbers-type 'relative)
 
+;; Scroll
+(setq scroll-margin 7
+ scroll-conservatively 101)
+(pixel-scroll-precision-mode 1)
+
 ;; Set frame transparency
 (set-frame-parameter (selected-frame) 'alpha efs/frame-transparency)
 (add-to-list 'default-frame-alist `(alpha . ,efs/frame-transparency))
@@ -870,7 +875,6 @@
   (markdown-header-face-4 ((t (:height 1.15 :weight bold :inherit markdown-header-face))))
   (markdown-header-face-5 ((t (:height 1.1  :weight bold :inherit markdown-header-face))))
   (markdown-header-face-6 ((t (:height 1.05 :weight semi-bold :inherit markdown-header-face)))))
-:hook
 
 (use-package eglot
   :hook (prog-mode . eglot-ensure))
